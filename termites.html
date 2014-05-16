@@ -1,0 +1,87 @@
+<html>
+<header>
+    <!--Agent-->
+	<script type="text/javascript" src="js/agent/agent.js"></script>
+    <script type="text/javascript" src="js/agent/termite.js"></script>
+    <script type="text/javascript" src="js/agent/wood_heap.js"></script>
+    <script type="text/javascript" src="js/agent/wall.js"></script>
+    <!--World-->
+    <script type="text/javascript" src="js/world/world.js"></script>
+    <script type="text/javascript" src="js/world/world_solver.js"></script>
+    <!--Expert system-->
+    <script type="text/javascript" src="js/expert_system/expert_system.js"></script>
+    <script type="text/javascript" src="js/expert_system/engine.js"></script>
+    <script type="text/javascript" src="js/expert_system/fact.js"></script>
+    <script type="text/javascript" src="js/expert_system/rule.js"></script>
+    <!--Math-->
+    <script type="text/javascript" src="js/math/vector.js"></script>
+
+    <script language="javascript">
+	var world = null;
+	var canvasElement = null;
+	var canvasContext = null;
+
+	var mainLoop = null;
+	var lastUpdate = Date.now();
+	var dt = 0;
+
+	function updateTime() {
+		var now = Date.now();
+    	dt = now - lastUpdate;
+    	lastUpdate = now;		
+	}
+
+	function update() {
+		updateTime();
+		world.update(dt);
+		canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
+		world.draw(canvasContext);
+	}
+
+	function init() {
+		
+		canvasElement = document.getElementById("canvas");
+		canvasContext = this.canvasElement.getContext("2d");
+
+		world = new World(canvasElement.width, canvasElement.height);
+
+
+		for(var i = 0; i < 5; i ++) {
+			var woodHeap = new WoodHeap();
+			world.addAgent(woodHeap);
+			woodHeap.moveTo(	canvasElement.width * Math.random(), 
+								canvasElement.height * Math.random());
+		}
+
+		for(var i = 0; i < 6; i++) {
+			var wall = new Wall();
+			world.addAgent(wall);
+			wall.moveTo(	canvasElement.width * Math.random(), 
+							canvasElement.height * Math.random());
+		}
+
+		var solver = new WorldSolver(world);
+		solver.solve();
+		
+		//world.draw(canvasContext);
+
+		for(var i = 0; i < 100; i ++) {
+			var termite = new Termite();
+			world.addAgent(termite);
+			termite.moveTo(	canvasElement.width * Math.random(), 
+							canvasElement.height * Math.random());
+		}
+		
+		
+		var fps = 60;
+		mainLoop = setInterval(update, 1000 / fps); 
+		//update();
+	}
+	</script>
+</header>
+<body onload="init()">
+	<canvas id="canvas" width="600" height="600" style="background-color:#eee; display:inline-block">
+
+	</canvas>
+</body>
+</html>
