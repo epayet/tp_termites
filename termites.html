@@ -17,6 +17,10 @@
     <script type="text/javascript" src="js/math/vector.js"></script>
 
     <script language="javascript">
+    var NB_TERMITES = 20;
+    var NB_WOODHEAPS = 5;
+    var NB_WALLS = 5;
+
 	var world = null;
 	var canvasElement = null;
 	var canvasContext = null;
@@ -28,7 +32,7 @@
 	function updateTime() {
 		var now = Date.now();
     	dt = now - lastUpdate;
-    	lastUpdate = now;		
+    	lastUpdate = now;
 	}
 
 	function update() {
@@ -39,42 +43,41 @@
 	}
 
 	function init() {
-		
+
 		canvasElement = document.getElementById("canvas");
 		canvasContext = this.canvasElement.getContext("2d");
 
 		world = new World(canvasElement.width, canvasElement.height);
 
 
-		for(var i = 0; i < 5; i ++) {
+		for(var i = 0; i < NB_WOODHEAPS; i ++) {
 			var woodHeap = new WoodHeap();
 			world.addAgent(woodHeap);
-			woodHeap.moveTo(	canvasElement.width * Math.random(), 
+			woodHeap.moveTo(	canvasElement.width * Math.random(),
 								canvasElement.height * Math.random());
 		}
 
-		for(var i = 0; i < 6; i++) {
+		for(var i = 0; i < NB_WALLS; i++) {
 			var wall = new Wall();
 			world.addAgent(wall);
-			wall.moveTo(	canvasElement.width * Math.random(), 
+			wall.moveTo(	canvasElement.width * Math.random(),
 							canvasElement.height * Math.random());
 		}
 
 		var solver = new WorldSolver(world);
 		solver.solve();
-		
+
 		//world.draw(canvasContext);
 
-		for(var i = 0; i < 100; i ++) {
+		for(var i = 0; i < NB_TERMITES; i ++) {
 			var termite = new Termite();
 			world.addAgent(termite);
-			termite.moveTo(	canvasElement.width * Math.random(), 
+			termite.moveTo(	canvasElement.width * Math.random(),
 							canvasElement.height * Math.random());
 		}
-		
-		
+
 		var fps = 60;
-		mainLoop = setInterval(update, 1000 / fps); 
+		mainLoop = setInterval(update, 1000 / fps);
 		//update();
 	}
 	</script>
