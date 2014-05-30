@@ -1,5 +1,6 @@
 <html>
 <header>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <!--Agent-->
 	<script type="text/javascript" src="js/agent/agent.js"></script>
     <script type="text/javascript" src="js/agent/termite.js"></script>
@@ -15,11 +16,16 @@
     <script type="text/javascript" src="js/expert_system/rule.js"></script>
     <!--Math-->
     <script type="text/javascript" src="js/math/vector.js"></script>
-
+    <!--Misc-->
+    <script type="text/javascript" src="js/wood_info.js"></script>
     <script language="javascript">
     var NB_TERMITES = 20;
     var NB_WOODHEAPS = 5;
-    var NB_WALLS = 5;
+    var NB_WALLS = 0;
+
+    DEBUG = {
+        play: true
+    };
 
 	var world = null;
 	var canvasElement = null;
@@ -43,7 +49,6 @@
 	}
 
 	function init() {
-
 		canvasElement = document.getElementById("canvas");
 		canvasContext = this.canvasElement.getContext("2d");
 
@@ -64,8 +69,8 @@
 							canvasElement.height * Math.random());
 		}
 
-		var solver = new WorldSolver(world);
-		solver.solve();
+		/*var solver = new WorldSolver(world);
+		solver.solve();*/
 
 		//world.draw(canvasContext);
 
@@ -83,8 +88,15 @@
 	</script>
 </header>
 <body onload="init()">
-	<canvas id="canvas" width="600" height="600" style="background-color:#eee; display:inline-block">
 
-	</canvas>
+    <div id="container">
+        <div id="main">
+            <canvas id="canvas" width="600" height="600" style="background-color:#eee; display:inline-block"></canvas>
+        </div>
+
+        <div id="misc">
+            <button onclick="DEBUG.play = !DEBUG.play">Stop/Play</button>
+        </div>
+    </div>
 </body>
 </html>
