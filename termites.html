@@ -17,11 +17,19 @@
     <!--Math-->
     <script type="text/javascript" src="js/math/vector.js"></script>
     <!--Misc-->
-    <script type="text/javascript" src="js/wood_info.js"></script>
+    <script type="text/javascript" src="js/misc/wood_info.js"></script>
+    <script type="text/javascript" src="js/misc/grid_info.js"></script>
+    <!--Lib-->
+    <script type="text/javascript" src="js/lib/astar.js"></script>
+
     <script language="javascript">
-    var NB_TERMITES = 20;
+    var NB_TERMITES = 1;
     var NB_WOODHEAPS = 5;
     var NB_WALLS = 0;
+    var NODE_SIZE = {
+        width: 16,
+        height: 16
+    };
 
     DEBUG = {
         play: true
@@ -75,7 +83,14 @@
 		//world.draw(canvasContext);
 
 		for(var i = 0; i < NB_TERMITES; i ++) {
-			var termite = new Termite();
+            var options = {
+                worldSize: {
+                    width: canvasElement.width,
+                    height: canvasElement.height
+                },
+                nodeSize: NODE_SIZE
+            };
+			var termite = new Termite(options);
 			world.addAgent(termite);
 			termite.moveTo(	canvasElement.width * Math.random(),
 							canvasElement.height * Math.random());
