@@ -1,0 +1,26 @@
+{
+  "name": "tp_termites",
+  "version": "0.0.0",
+  "description": "tp_termites\r ===========",
+  "main": "index.src",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/epayet/tp_termites.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epayet/tp_termites/issues"
+  },
+  "homepage": "https://github.com/epayet/tp_termites",
+  "devDependencies": {
+    "karma-chrome-launcher": "^0.1.4",
+    "karma": "^0.12.16",
+    "karma-jasmine": "^0.1.5",
+    "requirejs": "^2.1.14",
+    "karma-requirejs": "^0.2.2"
+  }
+}

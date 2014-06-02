@@ -2,7 +2,7 @@ GridInfo = function (options) {
     this.date = new Date();
     this.worldSize = options.worldSize;
     this.nodeSize = options.nodeSize;
-    this.createGraph();
+    //this.createGraph();
 };
 
 GridInfo.prototype.updateHeap = function (heap) {
