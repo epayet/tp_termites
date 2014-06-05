@@ -1,4 +1,4 @@
-tp_termites
+TP TERMITATOR
 ===========
 
 ## Stratégie :
