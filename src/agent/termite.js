@@ -79,7 +79,7 @@ Termite.prototype.act = function(conclusions, dt) {
                     this.randomMove(dt);
                     break;
             }
-            console.log(conclusions[i]);
+//            console.log(conclusions[i]);
         }
     }
 };
