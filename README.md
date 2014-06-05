@@ -19,6 +19,7 @@ TP TERMITATOR
 ## TODO
 
 * Finir les tests de WoodInfo
+* Refaire méthode update WoodInfo : Quand 2 termites se rencontrent, comparer les infos plutôt que d'écraser l'un ou l'autre : perte d'infos
 * GridInfo a été écrit avant les tests => écrire les tests et peut-être refacto
 * Look le mail du prof, le système multi agent a apparemment été mis à jour
 * Refaire la branche gh-pages => into merge branche
