@@ -1,3 +1,5 @@
+//TODO None of this is tested
+
 GridInfo = function (options) {
     this.date = new Date();
     this.worldSize = options.worldSize;
