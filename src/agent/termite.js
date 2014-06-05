@@ -79,7 +79,7 @@ Termite.prototype.act = function(conclusions, dt) {
                     this.randomMove(dt);
                     break;
             }
-//            console.log(conclusions[i]);
+            console.log(conclusions[i]);
         }
     }
 };
@@ -201,14 +201,18 @@ Termite.prototype.randomMove = function (dt) {
 };
 
 Termite.prototype.goToHeap = function(heap, dt) {
+    //TODO here is the pathFinding version
     //if didn't search yet, search path and set nodes destinations
-    if(!this.hasGoal()) {
-        var termiteNode = this.gridInfo.getNode(this.x, this.y);
-        var heapNode = this.gridInfo.getNode(heap.x, heap.y);
-        var nodes = this.gridInfo.search(termiteNode, heapNode);
-        var positions = this.gridInfo.getCenterPositions(nodes);
-        this.setTargets(positions);
-    }
+//    if(!this.hasGoal()) {
+//        var termiteNode = this.gridInfo.getNode(this.x, this.y);
+//        var heapNode = this.gridInfo.getNode(heap.x, heap.y);
+//        var nodes = this.gridInfo.search(termiteNode, heapNode);
+//        var positions = this.gridInfo.getCenterPositions(nodes);
+//        this.setTargets(positions);
+//    }
+//    this.move(dt);
+
+    this.setTarget({x: heap.x, y: heap.y});
     this.move(dt);
 };
 
@@ -216,7 +220,7 @@ Termite.prototype.updateInfoFromPerceivedTermites = function () {
     var perceivedTermites = this.getPerceivedAgents("termite");
     for(var i=0; i<perceivedTermites.length; i++) {
         this.woodInfo.update(perceivedTermites[i].woodInfo);
-        this.gridInfo.update(perceivedTermites[i].gridInfo);
+//        this.gridInfo.update(perceivedTermites[i].gridInfo);
     }
 };
 
@@ -224,6 +228,6 @@ Termite.prototype.updateInfoFromPerceivedHeaps = function() {
     var perceivedHeaps = this.getPerceivedAgents("wood_heap");
     for(var i=0; i<perceivedHeaps.length; i++) {
         this.woodInfo.updateHeap(perceivedHeaps[i]);
-        this.gridInfo.updateHeap(perceivedHeaps[i]);
+//        this.gridInfo.updateHeap(perceivedHeaps[i]);
     }
 };
