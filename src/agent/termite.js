@@ -202,6 +202,7 @@ Termite.prototype.randomMove = function (dt) {
 
 Termite.prototype.goToHeap = function(heap, dt) {
     //TODO here is the pathFinding version
+    //TODO sauf si changement de goal
     //if didn't search yet, search path and set nodes destinations
 //    if(!this.hasGoal()) {
 //        var termiteNode = this.gridInfo.getNode(this.x, this.y);

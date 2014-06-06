@@ -23,3 +23,4 @@ TP TERMITATOR
 * GridInfo a été écrit avant les tests => écrire les tests et peut-être refacto
 * Look le mail du prof, le système multi agent a apparemment été mis à jour
 * Refaire la branche gh-pages => into merge branche
+* Mettre des input à l'html pour configurer le nombre de termites, walls, vitesse, etc.
