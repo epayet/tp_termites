@@ -14,6 +14,7 @@
         var exports = definition();
         window.astar = exports.astar;
         window.Graph = exports.Graph;
+        window.GraphNode = exports.GraphNode;
     }
 })(function() {
 
@@ -382,7 +383,8 @@ BinaryHeap.prototype = {
 
 return {
     astar: astar,
-    Graph: Graph
+    Graph: Graph,
+    GraphNode: GraphNode
 };
 
 });
