@@ -15,6 +15,10 @@ describe("A Grid Info", function() {
         gridInfo = new GridInfo(options);
     });
 
+    beforeEach(function () {
+        jasmine.Clock.useMock();
+    });
+
     describe("initialization", function () {
         it("should create a gridInfo", function() {
             expect(gridInfo).toBeDefined();
@@ -59,10 +63,14 @@ describe("A Grid Info", function() {
                 x: 1,
                 y: 1
             };
-            //TODO wait
-            gridInfo.updateHeap(heap);
-            expect(nodeAffected.type).toBe(1);
-            expect(nodeAffected.data.date).toBeGreaterThan(dateBefore);
+
+            setTimeout(function () {
+                gridInfo.updateHeap(heap);
+                expect(nodeAffected.type).toBe(1);
+                expect(nodeAffected.data.date).toBeGreaterThan(dateBefore);
+            }, 100);
+
+            jasmine.Clock.tick(101);
         });
     });
 
@@ -82,7 +90,7 @@ describe("A Grid Info", function() {
         it("should have more than one node affected", function () {
             //node[1][1]
             var heap = {
-                woodCount: 6,
+                woodCount: 5,
                 x: 6,
                 y: 6
             };
