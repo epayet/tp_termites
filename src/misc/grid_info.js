@@ -53,14 +53,10 @@ GridInfo.prototype.getNodeMiddlePosition = function(x, y) {
 
 GridInfo.prototype.getNodesAffectedByHeap = function(heap) {
     var nodeHeap = this.getNode(heap.x, heap.y);
-    var heapRadius = this.getHeapRadius(heap);
+    var heapRadius = heap.getRadius();
     var nbNodesAffectedX = heapRadius / (this.nodeSize.width - (this.nodeSize.width/2));
     return [{
         x: 0,
         y: 0
     }];
-};
-
-GridInfo.prototype.getHeapRadius = function(heap) {
-    return heap.woodCount;
 };

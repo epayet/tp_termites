@@ -110,7 +110,7 @@ Termite.prototype.processCollision = function(collidedAgent) {
     if(collidedAgent && collidedAgent.typeId == "wood_heap") {
         if(!this.hasWood) {
             collidedAgent.takeWood();
-            if(collidedAgent.woodCount <= 0)
+            if(collidedAgent.dead)
                 this.woodInfo.heapDeleted(collidedAgent);
             this.hasWood = true;
         } else {
@@ -140,6 +140,7 @@ Termite.prototype.setTarget = function(target, callback) {
     this.setDirectionForTarget(target.x, target.y);
     this.destinationCallback = callback;
     this.destination = target;
+//    console.log(target);
 };
 
 Termite.prototype.hasArrivedToDestination = function () {

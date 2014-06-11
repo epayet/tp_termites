@@ -12,17 +12,16 @@ WoodInfo.prototype.least = function() {
 };
 
 WoodInfo.prototype.updateHeap = function(heap) {
-    if(heap.woodCount > 0) {
-        if (!this.contains(heap)) {
-            this.addHeapInfo(heap);
-            this.updateLeastAndMostHeap();
-        } else {
-            if (!this.isHeapInfoUpToDate(heap)) {
-                this.updateHeapInfo(heap);
-            }
+//    console.log(heap);
+    if (!this.contains(heap)) {
+        this.addHeapInfo(heap);
+        this.updateLeastAndMostHeap();
+    } else {
+        if (!this.isHeapInfoUpToDate(heap)) {
+            this.updateHeapInfo(heap);
         }
-        this.date = new Date();
     }
+    this.date = new Date();
 };
 
 WoodInfo.prototype.update = function(woodInfo) {
@@ -51,6 +50,7 @@ WoodInfo.prototype.addHeapInfo = function(heap) {
 };
 
 WoodInfo.prototype.heapDeleted = function(heap) {
+    console.log("deleted");
     delete this.heapsInfo[heap.identifier];
     this.updateLeastAndMostHeap();
     this.date = new Date();
