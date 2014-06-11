@@ -8,13 +8,22 @@ GridInfo.prototype.updateHeap = function(heap) {
     var nodesAffected = this.getNodesAffectedByHeap(heap);
     for(var i=0; i<nodesAffected.length; i++) {
         var nodeAffected = this.nodes[nodesAffected[i].x][nodesAffected[i].y];
-        nodeAffected.type = 1;
+        nodeAffected.type = 0;
         nodeAffected.data.date = new Date();
     }
 };
 
 GridInfo.prototype.update = function(gridInfo) {
-
+    for(var x=0; x<this.nodes.length; x++) {
+        for(var y=0; y<this.nodes[x].length; y++) {
+            var otherNode = gridInfo.nodes[x][y];
+            var currentNode = this.nodes[x][y];
+            if(otherNode.data.date > currentNode.data.date) {
+                currentNode.data.date = otherNode.data.date;
+                currentNode.type = otherNode.type;
+            }
+        }
+    }
 };
 
 GridInfo.prototype.getNode = function(x, y) {
@@ -23,12 +32,15 @@ GridInfo.prototype.getNode = function(x, y) {
     return {x: Math.floor(nodeX), y: Math.floor(nodeY)};
 };
 
-GridInfo.prototype.search = function(startNode, endNode) {
-
+GridInfo.prototype.search = function(start, end) {
+    var startNode = this.nodes[start.x][start.y];
+    var endNode = this.nodes[end.x][end.y];
+    var result = astar.search(this.nodes, startNode, endNode, {diagonal: true});
+    return result;
 };
 
 GridInfo.prototype.getCenterPositions = function(nodes) {
-
+    return [];
 };
 
 GridInfo.prototype.createNodes = function() {
@@ -36,7 +48,7 @@ GridInfo.prototype.createNodes = function() {
     for(var x=0; x<this.worldSize.width / this.nodeSize.width; x++) {
         this.nodes[x] = [];
         for(var y=0; y<this.worldSize.height / this.nodeSize.height; y++) {
-            var node = new GraphNode(x, y, 0);
+            var node = new GraphNode(x, y, 1);
             node.data.date = new Date();
             node.data.middlePosition = this.getNodeMiddlePosition(x, y);
             this.nodes[x][y] = node;
