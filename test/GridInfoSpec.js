@@ -65,10 +65,12 @@ describe("A Grid Info", function() {
                 gridInfo.updateHeap(heap);
                 expect(nodeAffected.type).toBe(1);
                 expect(nodeAffected.data.date).toBeGreaterThan(dateBefore);
-            }, 100);
+            }, 10);
 
-            jasmine.Clock.tick(500);
+            jasmine.Clock.tick(100);
         });
+
+        it("should update its info from a heap which take more nodes");
     });
 
     describe("getNodesAffectedByHeap", function () {
@@ -88,20 +90,6 @@ describe("A Grid Info", function() {
         });
     });
 
-    describe("getNode", function () {
-        it("should get the first node", function () {
-            var node = gridInfo.getNode(0, 0);
-            expect(node.x).toBe(0);
-            expect(node.y).toBe(0);
-        });
-
-        it("should get the node in the middle", function () {
-            var node = gridInfo.getNode(5, 7);
-            expect(node.x).toBe(1);
-            expect(node.y).toBe(1);
-        });
-    });
-
     describe("getNbNodesAffectedAround", function () {
         it("should have only one node affected", function () {
             var heap = createHeap(1, 1, 1);
@@ -113,6 +101,20 @@ describe("A Grid Info", function() {
             var heap = createHeap(6, 6, 5);
             var nbNodesAffected = gridInfo.getNbNodesAffectedAround(heap, gridInfo.nodeSize.width);
             expect(nbNodesAffected).toBe(1);
+        });
+    });
+
+    describe("getNode", function () {
+        it("should get the first node", function () {
+            var node = gridInfo.getNode(0, 0);
+            expect(node.x).toBe(0);
+            expect(node.y).toBe(0);
+        });
+
+        it("should get the node in the middle", function () {
+            var node = gridInfo.getNode(5, 7);
+            expect(node.x).toBe(1);
+            expect(node.y).toBe(1);
         });
     });
 });
