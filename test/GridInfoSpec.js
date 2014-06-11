@@ -58,29 +58,22 @@ describe("A Grid Info", function() {
         it("should update its info from one heap which takes one node", function () {
             var nodeAffected = gridInfo.nodes[0][0];
             var dateBefore = nodeAffected.data.date;
-            var heap = {
-                woodCount: 1,
-                x: 1,
-                y: 1
-            };
+            var heap = createHeap(1, 1, 1);
 
+            //Doesnt work everytime...
             setTimeout(function () {
                 gridInfo.updateHeap(heap);
                 expect(nodeAffected.type).toBe(1);
                 expect(nodeAffected.data.date).toBeGreaterThan(dateBefore);
             }, 100);
 
-            jasmine.Clock.tick(101);
+            jasmine.Clock.tick(500);
         });
     });
 
     describe("getNodesAffectedByHeap", function () {
         it("should have only the first node affected", function () {
-            var heap = {
-                woodCount: 1,
-                x: 1,
-                y: 1
-            };
+            var heap = createHeap(1, 1, 1);
             var nodes = gridInfo.getNodesAffectedByHeap(heap);
             expect(nodes.length).toBe(1);
             expect(nodes[0].x).toBe(0);
@@ -89,13 +82,50 @@ describe("A Grid Info", function() {
 
         it("should have more than one node affected", function () {
             //node[1][1]
-            var heap = {
-                woodCount: 5,
-                x: 6,
-                y: 6
-            };
+            var heap = createHeap(6, 6, 5);
             var nodes = gridInfo.getNodesAffectedByHeap(heap);
             expect(nodes.length).toBe(9);
         });
     });
+
+    describe("getNode", function () {
+        it("should get the first node", function () {
+            var node = gridInfo.getNode(0, 0);
+            expect(node.x).toBe(0);
+            expect(node.y).toBe(0);
+        });
+
+        it("should get the node in the middle", function () {
+            var node = gridInfo.getNode(5, 7);
+            expect(node.x).toBe(1);
+            expect(node.y).toBe(1);
+        });
+    });
+
+    describe("getNbNodesAffectedAround", function () {
+        it("should have only one node affected", function () {
+            var heap = createHeap(1, 1, 1);
+            var nbNodesAffected = gridInfo.getNbNodesAffectedAround(heap, gridInfo.nodeSize.width);
+            expect(nbNodesAffected).toBe(0);
+        });
+
+        it("should have 1 node affected around", function () {
+            var heap = createHeap(6, 6, 5);
+            var nbNodesAffected = gridInfo.getNbNodesAffectedAround(heap, gridInfo.nodeSize.width);
+            expect(nbNodesAffected).toBe(1);
+        });
+    });
 });
+
+function createHeap(x, y, woodCount) {
+    return {
+        woodCount: woodCount,
+        x: x,
+        y: y,
+        getRadius: getHeapRadius
+    };
+}
+
+function getHeapRadius() {
+    return this.woodCount;
+}

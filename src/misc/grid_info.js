@@ -18,7 +18,9 @@ GridInfo.prototype.update = function(gridInfo) {
 };
 
 GridInfo.prototype.getNode = function(x, y) {
-
+    var nodeX = x / this.nodeSize.width;
+    var nodeY = y / this.nodeSize.height;
+    return {x: Math.floor(nodeX), y: Math.floor(nodeY)};
 };
 
 GridInfo.prototype.search = function(startNode, endNode) {
@@ -53,10 +55,22 @@ GridInfo.prototype.getNodeMiddlePosition = function(x, y) {
 
 GridInfo.prototype.getNodesAffectedByHeap = function(heap) {
     var nodeHeap = this.getNode(heap.x, heap.y);
+    var nbNodesAffectedX = this.getNbNodesAffectedAround(heap, this.nodeSize.width);
+    var nbNodesAffectedY = this.getNbNodesAffectedAround(heap, this.nodeSize.height);
+
+    var nodes = [];
+    for(var x=nodeHeap.x - nbNodesAffectedX; x<=nodeHeap.x + nbNodesAffectedX; x++) {
+        for(var y=nodeHeap.y - nbNodesAffectedY; y<=nodeHeap.y + nbNodesAffectedY; y++) {
+            nodes.push({x: x, y: y});
+        }
+    }
+    return nodes;
+};
+
+GridInfo.prototype.getNbNodesAffectedAround = function (heap, size) {
     var heapRadius = heap.getRadius();
-    var nbNodesAffectedX = heapRadius / (this.nodeSize.width - (this.nodeSize.width/2));
-    return [{
-        x: 0,
-        y: 0
-    }];
+    if(heapRadius > size/2)
+        return Math.ceil((heapRadius - size/2) / size);
+    else
+        return Math.floor(heapRadius / size);
 };
