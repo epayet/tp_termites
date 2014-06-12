@@ -147,17 +147,25 @@ describe("A Grid Info", function() {
     });
 
     describe("getCenterPositions", function () {
-        it("should have none centers", function () {
-            var centers = gridInfo.getCenterPositions();
-            expect(centers.length).toBe(0);
-        });
-
         it("should get the centers of two nodes", function () {
-            //TODO finish
-//            var centers = gridInfo.getCenterPositions(nodes);
-//            expect(centers.length).toBe(2);
+            var nodes = [
+                {x: 0, y: 0},
+                {x: 2, y: 2}
+            ];
+            var centers = gridInfo.getCenterPositions(nodes);
+            expect(centers.length).toBe(2);
+            expect(centers[0].x).toBe(2);
+            expect(centers[0].y).toBe(2);
+            expect(centers[1].x).toBe(10);
+            expect(centers[1].y).toBe(10);
         });
     });
+
+    describe("updateWoodTaken", function () {
+        it("should have the same nodes affected");
+    });
+
+    describe("updateWall");
 });
 
 function createHeap(x, y, woodCount) {
@@ -165,10 +173,8 @@ function createHeap(x, y, woodCount) {
         woodCount: woodCount,
         x: x,
         y: y,
-        getRadius: getHeapRadius
+        getRadius: function() {
+            return this.woodCount;
+        }
     };
-}
-
-function getHeapRadius() {
-    return this.woodCount;
 }

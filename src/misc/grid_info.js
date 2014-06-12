@@ -40,7 +40,12 @@ GridInfo.prototype.search = function(start, end) {
 };
 
 GridInfo.prototype.getCenterPositions = function(nodes) {
-    return [];
+    var centers = [];
+    for(var i=0; i<nodes.length; i++) {
+        var currentNode = this.nodes[nodes[i].x][nodes[i].y];
+        centers.push(currentNode.data.middlePosition);
+    }
+    return centers;
 };
 
 GridInfo.prototype.createNodes = function() {
