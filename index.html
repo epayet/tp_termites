@@ -6,6 +6,7 @@
     <script type="text/javascript" src="src/agent/termite.js"></script>
     <script type="text/javascript" src="src/agent/wood_heap.js"></script>
     <script type="text/javascript" src="src/agent/wall.js"></script>
+    <script type="text/javascript" src="src/agent/grid_debug.js"></script>
     <!--World-->
     <script type="text/javascript" src="src/world/world.js"></script>
     <script type="text/javascript" src="src/world/world_solver.js"></script>
@@ -17,13 +18,13 @@
     <!--Math-->
     <script type="text/javascript" src="src/math/vector.js"></script>
     <!--Misc-->
-    <script type="text/javascript" src="src/misc/wood_info.js"></script>
-    <script type="text/javascript" src="src/misc/grid_info.js"></script>
+    <script type="text/javascript" src="src/info/wood_info.js"></script>
+    <script type="text/javascript" src="src/info/grid_info.js"></script>
     <!--Lib-->
     <script type="text/javascript" src="src/lib/astar.js"></script>
 
     <script language="javascript">
-    var NB_TERMITES = 20;
+    var NB_TERMITES = 1;
     var NB_WOODHEAPS = 5;
     var NB_WALLS = 0;
     var NODE_SIZE = {
@@ -32,7 +33,9 @@
     };
 
     DEBUG = {
-        play: true
+        play: true,
+        toggle_grid: false,
+        useGrid : true
     };
 
 	var world = null;
@@ -68,8 +71,8 @@
 		for(var i = 0; i < NB_WOODHEAPS; i ++) {
 			var woodHeap = new WoodHeap();
 			world.addAgent(woodHeap);
-			woodHeap.moveTo(	Math.floor(canvasElement.width * Math.random()),
-								Math.floor(canvasElement.height * Math.random()));
+			woodHeap.moveTo(	canvasElement.width * Math.random(),
+								canvasElement.height * Math.random());
             HEAPS.push(woodHeap);
 		}
 
@@ -86,17 +89,27 @@
 		//world.draw(canvasContext);
 
 		for(var i = 0; i < NB_TERMITES; i ++) {
+            var isDebugTermite = false;
+            if(i == 0)
+                isDebugTermite = true;
             var options = {
                 worldSize: {
                     width: canvasElement.width,
                     height: canvasElement.height
                 },
-                nodeSize: NODE_SIZE
+                nodeSize: NODE_SIZE,
+                isDebugTermite: isDebugTermite,
+                useGrid : DEBUG.useGrid
             };
 			var termite = new Termite(options);
 			world.addAgent(termite);
 			termite.moveTo(	canvasElement.width * Math.random(),
 							canvasElement.height * Math.random());
+            if(isDebugTermite && DEBUG.useGrid)
+                world.addAgent(new GridDebug({
+                    gridInfo: termite.gridInfo,
+                    nodeSize : NODE_SIZE
+                }));
 		}
 
 		var fps = 60;
@@ -114,6 +127,7 @@
 
         <div id="misc">
             <button onclick="DEBUG.play = !DEBUG.play">Stop/Play</button>
+            <button onclick="DEBUG.toggle_grid = !DEBUG.toggle_grid">Toggle grid</button>
         </div>
     </div>
 </body>

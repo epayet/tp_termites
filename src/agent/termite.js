@@ -12,17 +12,21 @@ function Termite(options) {
     this.perceivedAgents = [];
     this.delay = 0;
     this.woodInfo = new WoodInfo();
+    this.useGrid = options.useGrid;
 
     this.collideTypes = ["wood_heap", "wall"];
     this.contactTypes = ["wood_heap", "termite"];
-    this.gridInfo = new GridInfo({
-        worldSize: options.worldSize,
-        nodeSize: options.nodeSize
-    });
+    if(this.useGrid) {
+        this.gridInfo = new GridInfo({
+            worldSize: options.worldSize,
+            nodeSize: options.nodeSize
+        });
+    }
     this.destinationMargin = {
         x: options.nodeSize.width / 2,
         y: options.nodeSize.height / 2
     };
+    this.isDebugTermite = options.isDebugTermite;
 
     this.initExpertSystem();
 }
@@ -110,6 +114,8 @@ Termite.prototype.processCollision = function(collidedAgent) {
     if(collidedAgent && collidedAgent.typeId == "wood_heap") {
         if(!this.hasWood) {
             collidedAgent.takeWood();
+            if(this.useGrid)
+                this.gridInfo.updateWoodTaken(collidedAgent);
             if(collidedAgent.dead)
                 this.woodInfo.heapDeleted(collidedAgent);
             this.hasWood = true;
@@ -175,6 +181,8 @@ Termite.prototype.hasGoal = function () {
 Termite.prototype.draw = function(context) {
     if(this.hasWood)
         context.fillStyle="rgba(255, 0, 0, 1)";
+    else if(this.isDebugTermite)
+        context.fillStyle="rgba(0, 255, 0, 1)";
     else
         context.fillStyle="rgba(0, 0, 0, 1)";
     context.strokeStyle="#000";
@@ -222,7 +230,8 @@ Termite.prototype.updateInfoFromPerceivedTermites = function () {
     var perceivedTermites = this.getPerceivedAgents("termite");
     for(var i=0; i<perceivedTermites.length; i++) {
         this.woodInfo.update(perceivedTermites[i].woodInfo);
-//        this.gridInfo.update(perceivedTermites[i].gridInfo);
+        if(this.useGrid)
+            this.gridInfo.update(perceivedTermites[i].gridInfo);
     }
 };
 
@@ -230,6 +239,7 @@ Termite.prototype.updateInfoFromPerceivedHeaps = function() {
     var perceivedHeaps = this.getPerceivedAgents("wood_heap");
     for(var i=0; i<perceivedHeaps.length; i++) {
         this.woodInfo.updateHeap(perceivedHeaps[i]);
-//        this.gridInfo.updateHeap(perceivedHeaps[i]);
+        if(this.useGrid)
+            this.gridInfo.updateHeap(perceivedHeaps[i]);
     }
 };
