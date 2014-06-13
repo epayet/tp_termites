@@ -2,6 +2,7 @@ GridDebug = function(options) {
     Agent.call(this);
     this.gridInfo = options.gridInfo;
     this.nodeSize = options.nodeSize;
+    this.termiteTargets = options.termiteTargets;
 };
 
 GridDebug.prototype = Object.create(Agent.prototype);

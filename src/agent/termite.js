@@ -13,6 +13,7 @@ function Termite(options) {
     this.delay = 0;
     this.woodInfo = new WoodInfo();
     this.useGrid = options.useGrid;
+    this.targets = [];
 
     this.collideTypes = ["wood_heap", "wall"];
     this.contactTypes = ["wood_heap", "termite"];
@@ -178,6 +179,10 @@ Termite.prototype.hasGoal = function () {
     return this.targets && this.targets.length > 0 && this.destination != null;
 };
 
+Termite.prototype.isDestination = function(heap) {
+    return false;
+};
+
 Termite.prototype.draw = function(context) {
     if(this.hasWood)
         context.fillStyle="rgba(255, 0, 0, 1)";
@@ -210,19 +215,17 @@ Termite.prototype.randomMove = function (dt) {
 };
 
 Termite.prototype.goToHeap = function(heap, dt) {
-    //TODO here is the pathFinding version
-    //TODO sauf si changement de goal
-    //if didn't search yet, search path and set nodes destinations
-//    if(!this.hasGoal()) {
-//        var termiteNode = this.gridInfo.getNode(this.x, this.y);
-//        var heapNode = this.gridInfo.getNode(heap.x, heap.y);
-//        var nodes = this.gridInfo.search(termiteNode, heapNode);
-//        var positions = this.gridInfo.getCenterPositions(nodes);
-//        this.setTargets(positions);
-//    }
-//    this.move(dt);
+    if(this.useGrid) {
+        if (!this.isDestination(heap)) {
+            var termiteNode = this.gridInfo.getNode(this.x, this.y);
+            var heapNode = this.gridInfo.getNode(heap.x, heap.y);
+            var nodes = this.gridInfo.search(termiteNode, heapNode);
+            var positions = this.gridInfo.getCenterPositions(nodes);
+            this.setTargets(positions);
+        }
+    } else
+        this.setTarget({x: heap.x, y: heap.y});
 
-    this.setTarget({x: heap.x, y: heap.y});
     this.move(dt);
 };
 

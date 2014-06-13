@@ -34,7 +34,7 @@
 
     DEBUG = {
         play: true,
-        toggle_grid: false,
+        toggle_grid: true,
         useGrid : true
     };
 
@@ -108,7 +108,8 @@
             if(isDebugTermite && DEBUG.useGrid)
                 world.addAgent(new GridDebug({
                     gridInfo: termite.gridInfo,
-                    nodeSize : NODE_SIZE
+                    nodeSize : NODE_SIZE,
+                    termiteTargets: termite.targets
                 }));
 		}
 

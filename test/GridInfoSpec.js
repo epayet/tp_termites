@@ -94,6 +94,12 @@ describe("A Grid Info", function() {
             var nodes = gridInfo.getNodesAffectedByHeap(heap);
             expect(nodes.length).toBe(9);
         });
+
+        it("should have some nodes affected but not negatives", function () {
+            var heap = createHeap(2, 6, 5);
+            var nodes = gridInfo.getNodesAffectedByHeap(heap);
+            expect(nodes.length).toBe(6);
+        });
     });
 
     describe("getNbNodesAffectedAround", function () {

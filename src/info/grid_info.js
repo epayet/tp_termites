@@ -97,7 +97,8 @@ GridInfo.prototype.getNodesAffectedByHeap = function(heap) {
     var nodes = [];
     for(var x=nodeHeap.x - nbNodesAffectedX; x<=nodeHeap.x + nbNodesAffectedX; x++) {
         for(var y=nodeHeap.y - nbNodesAffectedY; y<=nodeHeap.y + nbNodesAffectedY; y++) {
-            nodes.push({x: x, y: y});
+            if(x >= 0 && y >=0)
+                nodes.push({x: x, y: y});
         }
     }
     return nodes;
