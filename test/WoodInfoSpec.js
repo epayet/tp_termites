@@ -5,9 +5,12 @@ describe("A WoodInfo", function () {
         woodInfo = new WoodInfo();
     });
 
-    it("should create a WoodInfo", function () {
-        expect(woodInfo).toBeDefined();
+    describe("initialisation", function() {
+        it("should create a WoodInfo", function () {
+            expect(woodInfo).toBeDefined();
+        });
     });
+
 
     it("should update its info when encountering another woodInfo more recent");
     it("should not update its info when encountering another woodInfo less recent");
@@ -32,6 +35,7 @@ describe("A WoodInfo", function () {
 
     it("should be enough info with at least 2 heaps defined (least and most)");
 
+    it("Should add heap info");
     //addHeapInfo
     //updateHeapInfo
     //heapDeleted
