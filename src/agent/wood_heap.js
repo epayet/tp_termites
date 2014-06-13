@@ -18,7 +18,8 @@ WoodHeap.prototype.updateRadius = function() {
 };
 
 WoodHeap.prototype.getRadius = function() {
-    return Math.floor(this.woodCount / 2);
+//    return Math.floor(this.woodCount / 2);
+    return this.woodCount;
 };
 
 WoodHeap.prototype.update = function(dt) {
@@ -31,7 +32,7 @@ WoodHeap.prototype.addWood = function() {
 
 WoodHeap.prototype.takeWood = function() {
 	this.woodCount--;
-	if(this.woodCount <= 1) {
+	if(this.woodCount <= 0) {
 		this.dead = true;
 	}
 };
