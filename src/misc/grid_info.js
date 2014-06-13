@@ -4,11 +4,13 @@ GridInfo = function(options) {
     this.createNodes();
 };
 
-GridInfo.prototype.updateHeap = function(heap) {
+GridInfo.prototype.updateHeap = function(heap, type) {
+    if(!type)
+        type = 0;
     var nodesAffected = this.getNodesAffectedByHeap(heap);
     for(var i=0; i<nodesAffected.length; i++) {
         var nodeAffected = this.nodes[nodesAffected[i].x][nodesAffected[i].y];
-        nodeAffected.type = 0;
+        nodeAffected.type = type;
         nodeAffected.data.date = new Date();
     }
 };
@@ -24,6 +26,23 @@ GridInfo.prototype.update = function(gridInfo) {
             }
         }
     }
+};
+
+GridInfo.prototype.updateWoodTaken = function(heap) {
+    var heapBefore = new WoodHeap();
+    heapBefore.woodCount = heap.woodCount + 1;
+    heapBefore.moveTo(heap.x, heap.y);
+
+    if(!heap.dead) {
+        var nodesAffectedBefore = this.getNodesAffectedByHeap(heapBefore);
+        var nodesAffectedNow = this.getNodesAffectedByHeap(heap);
+        if (nodesAffectedNow.length < nodesAffectedBefore.length) {
+            this.updateHeap(heapBefore, 1);
+            this.updateHeap(heap);
+        }
+    }
+    else
+        this.updateHeap(heapBefore, 1);
 };
 
 GridInfo.prototype.getNode = function(x, y) {

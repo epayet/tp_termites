@@ -16,6 +16,12 @@ describe("A Grid Info", function() {
         gridInfo2 = new GridInfo(options);
     });
 
+    beforeEach(function () {
+        spyOn(WoodHeap.prototype, "getRadius").andCallFake(function() {
+            return this.woodCount;
+        });
+    });
+
     describe("initialization", function () {
         it("should create a gridInfo", function() {
             expect(gridInfo).toBeDefined();
@@ -162,10 +168,39 @@ describe("A Grid Info", function() {
     });
 
     describe("updateWoodTaken", function () {
-        it("should have the same nodes affected");
+        it("should have the same nodes affected", function() {
+            var heap = createHeap(1, 1, 1);
+            //node unwalkable
+            gridInfo.nodes[0][0].type = 0;
+            gridInfo.updateWoodTaken(heap);
+            expect(gridInfo.nodes[0][0].type).toBe(0);
+        });
+
+        it("should take one nbNode less: 8 less", function() {
+            var heap = createHeap(6, 6, 3);
+            gridInfo.updateHeap(heap);
+            expect(gridInfo.nodes[0][0].type).toBe(0);
+            heap.woodCount--;
+
+            gridInfo.updateWoodTaken(heap);
+            expect(gridInfo.nodes[0][0].type).toBe(1);
+            expect(gridInfo.nodes[2][2].type).toBe(1);
+            expect(gridInfo.nodes[1][1].type).toBe(0);
+        });
+
+        it("should disappear", function() {
+            var heap = createHeap(6, 6, 0);
+            heap.dead = true;
+            gridInfo.nodes[1][1].type = 0;
+
+            gridInfo.updateWoodTaken(heap);
+            expect(gridInfo.nodes[1][1].type).toBe(1);
+        });
     });
 
-    describe("updateWall");
+    describe("updateWall", function() {
+
+    });
 });
 
 function createHeap(x, y, woodCount) {
