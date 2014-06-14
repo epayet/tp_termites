@@ -11,6 +11,7 @@ function Wall() {
 		this.boundingHeight = 100 + Math.random() * 400;
 		this.boundingWidth = 20;		
 	}
+    this.identifier = Math.random() * 1000;
 
 //	this.collideTypes = ["wood_heap"];
 //	this.contactTypes = ["wood_heap"];

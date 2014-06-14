@@ -115,6 +115,27 @@ describe("A Grid Info", function() {
     });
 
     describe("updateWall", function() {
+        it("should update a really small wall (one node)", function () {
+            var wall = {
+                x: 2,
+                y: 2,
+                boundingWidth: 1,
+                boundingHeight: 1
+            };
+            gridInfo.updateWall(wall);
+            expect(gridInfo.nodes[0][0].type).toBe(0);
+        });
 
+        it("should update a normal wall", function () {
+            var wall = {
+                x: 4,
+                y: 1,
+                boundingWidth: 2,
+                boundingHeight: 2
+            };
+            gridInfo.updateWall(wall);
+            expect(gridInfo.nodes[0][0].type).toBe(0);
+            expect(gridInfo.nodes[1][0].type).toBe(0);
+        });
     });
 });

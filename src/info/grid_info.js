@@ -1,6 +1,7 @@
 GridInfo = function(options) {
     this.nodeSize = options.nodeSize;
     this.worldSize = options.worldSize;
+    this.wallsEncountered = {};
     this.createNodes();
 };
 
@@ -14,6 +15,24 @@ GridInfo.prototype.update = function(gridInfo) {
                 currentNode.type = otherNode.type;
             }
         }
+    }
+};
+
+GridInfo.prototype.updateWall = function(wall) {
+    if(this.wallsEncountered[wall.identifier] == null) {
+        var nbNodesX = this.worldSize.width / this.nodeSize.width;
+        var nbNodesY = this.worldSize.height / this.nodeSize.height;
+        var nodeCenterWall = this.getNode(wall.x, wall.y);
+        var nbNodesAffectedX = Math.ceil((wall.boundingWidth / 2) / this.nodeSize.width);
+        var nbNodesAffectedY = Math.ceil((wall.boundingHeight / 2) / this.nodeSize.height);
+        for (var x = nodeCenterWall.x - nbNodesAffectedX; x <= nodeCenterWall.x + nbNodesAffectedX; x++) {
+            for (var y = nodeCenterWall.y - nbNodesAffectedY; y <= nodeCenterWall.y + nbNodesAffectedY; y++) {
+                if (x >= 0 && y >= 0 && x < nbNodesX && y < nbNodesY) {
+                    this.nodes[x][y].type = 0;
+                }
+            }
+        }
+        this.wallsEncountered[wall.identifier] = true;
     }
 };
 
