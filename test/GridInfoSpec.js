@@ -57,65 +57,6 @@ describe("A Grid Info", function() {
         });
     });
 
-    describe("updateHeap", function () {
-        it("should update its info from one heap which takes one node", function () {
-            var nodeAffected = gridInfo.nodes[0][0];
-            var dateBefore = nodeAffected.data.date;
-            //mock date
-            dateBefore = new Date(2010);
-            var heap = createHeap(1, 1, 1);
-
-            gridInfo.updateHeap(heap);
-            expect(nodeAffected.type).toBe(0);
-            expect(nodeAffected.data.date).toBeGreaterThan(dateBefore);
-        });
-
-        it("should update its info from a heap which take more nodes", function() {
-            var heap = createHeap(6, 6, 5);
-            gridInfo.updateHeap(heap);
-            expect(gridInfo.nodes[0][0].type).toBe(0);
-            expect(gridInfo.nodes[0][1].type).toBe(0);
-            expect(gridInfo.nodes[1][1].type).toBe(0); //etc.
-        });
-    });
-
-    describe("getNodesAffectedByHeap", function () {
-        it("should have only the first node affected", function () {
-            var heap = createHeap(1, 1, 1);
-            var nodes = gridInfo.getNodesAffectedByHeap(heap);
-            expect(nodes.length).toBe(1);
-            expect(nodes[0].x).toBe(0);
-            expect(nodes[0].y).toBe(0);
-        });
-
-        it("should have more than one node affected", function () {
-            //node[1][1]
-            var heap = createHeap(6, 6, 5);
-            var nodes = gridInfo.getNodesAffectedByHeap(heap);
-            expect(nodes.length).toBe(9);
-        });
-
-        it("should have some nodes affected but not negatives", function () {
-            var heap = createHeap(2, 6, 5);
-            var nodes = gridInfo.getNodesAffectedByHeap(heap);
-            expect(nodes.length).toBe(6);
-        });
-    });
-
-    describe("getNbNodesAffectedAround", function () {
-        it("should have only one node affected", function () {
-            var heap = createHeap(1, 1, 1);
-            var nbNodesAffected = gridInfo.getNbNodesAffectedAround(heap, gridInfo.nodeSize.width);
-            expect(nbNodesAffected).toBe(0);
-        });
-
-        it("should have 1 node affected around", function () {
-            var heap = createHeap(6, 6, 5);
-            var nbNodesAffected = gridInfo.getNbNodesAffectedAround(heap, gridInfo.nodeSize.width);
-            expect(nbNodesAffected).toBe(1);
-        });
-    });
-
     describe("getNode", function () {
         it("should get the first node", function () {
             var node = gridInfo.getNode(0, 0);
@@ -173,49 +114,7 @@ describe("A Grid Info", function() {
         });
     });
 
-    describe("updateWoodTaken", function () {
-        it("should have the same nodes affected", function() {
-            var heap = createHeap(1, 1, 1);
-            //node unwalkable
-            gridInfo.nodes[0][0].type = 0;
-            gridInfo.updateWoodTaken(heap);
-            expect(gridInfo.nodes[0][0].type).toBe(0);
-        });
-
-        it("should take one nbNode less: 8 less", function() {
-            var heap = createHeap(6, 6, 3);
-            gridInfo.updateHeap(heap);
-            expect(gridInfo.nodes[0][0].type).toBe(0);
-            heap.woodCount--;
-
-            gridInfo.updateWoodTaken(heap);
-            expect(gridInfo.nodes[0][0].type).toBe(1);
-            expect(gridInfo.nodes[2][2].type).toBe(1);
-            expect(gridInfo.nodes[1][1].type).toBe(0);
-        });
-
-        it("should disappear", function() {
-            var heap = createHeap(6, 6, 0);
-            heap.dead = true;
-            gridInfo.nodes[1][1].type = 0;
-
-            gridInfo.updateWoodTaken(heap);
-            expect(gridInfo.nodes[1][1].type).toBe(1);
-        });
-    });
-
     describe("updateWall", function() {
 
     });
 });
-
-function createHeap(x, y, woodCount) {
-    return {
-        woodCount: woodCount,
-        x: x,
-        y: y,
-        getRadius: function() {
-            return this.woodCount;
-        }
-    };
-}

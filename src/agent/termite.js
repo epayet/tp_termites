@@ -10,13 +10,15 @@ function Termite(options) {
     this.speed = 200;
     this.collidedAgent = null;
     this.perceivedAgents = [];
-    this.delay = 0;
     this.woodInfo = new WoodInfo();
     this.useGrid = options.useGrid;
     this.targets = [];
+    this.nodesTarget = [{x:0, y:0}];
+    this.worldSize = options.worldSize;
+    this.nodeSize = options.nodeSize;
 
     this.collideTypes = ["wood_heap", "wall"];
-    this.contactTypes = ["wood_heap", "termite"];
+    this.contactTypes = ["wood_heap", "termite", "wall"];
     if(this.useGrid) {
         this.gridInfo = new GridInfo({
             worldSize: options.worldSize,
@@ -111,12 +113,11 @@ Termite.prototype.getPerceivedAgents = function(agentType) {
 };
 
 Termite.prototype.processCollision = function(collidedAgent) {
+    this.resetGoal();
     this.collidedAgent = collidedAgent;
     if(collidedAgent && collidedAgent.typeId == "wood_heap") {
         if(!this.hasWood) {
             collidedAgent.takeWood();
-            if(this.useGrid)
-                this.gridInfo.updateWoodTaken(collidedAgent);
             if(collidedAgent.dead)
                 this.woodInfo.heapDeleted(collidedAgent);
             this.hasWood = true;
@@ -175,18 +176,30 @@ Termite.prototype.setTargets = function(targets) {
     }
 };
 
+Termite.prototype.setNodesTarget = function (nodes) {
+    //reinitialize targets and set new targets without losing references
+    this.nodesTarget.length = 0;
+    this.nodesTarget.push.apply(this.nodesTarget, nodes);
+};
+
 Termite.prototype.hasGoal = function () {
     return this.targets && this.targets.length > 0 && this.destination != null;
 };
 
-Termite.prototype.isDestination = function(heap) {
-    return false;
+Termite.prototype.resetGoal = function() {
+    this.targets = [];
+    this.nodesTarget.length = 0;
+};
+
+Termite.prototype.isDestination = function(x, y) {
+    var lastTarget = this.targets[this.targets.length - 1];
+    return lastTarget && lastTarget.x == x && lastTarget.y == y;
 };
 
 Termite.prototype.draw = function(context) {
     if(this.hasWood)
         context.fillStyle="rgba(255, 0, 0, 1)";
-    else if(this.isDebugTermite)
+    else if(this.isDebugTermite && DEBUG.toggle_grid)
         context.fillStyle="rgba(0, 255, 0, 1)";
     else
         context.fillStyle="rgba(0, 0, 0, 1)";
@@ -197,31 +210,34 @@ Termite.prototype.draw = function(context) {
     context.stroke();
 };
 
-
-//actions
-Termite.prototype.randomDirection = function() {
-    var x = 2 * Math.random() - 1;
-    var y = 2 * Math.random() - 1;
-    this.direction = new Vect(x, y);
-};
-
 Termite.prototype.randomMove = function (dt) {
-    this.delay -= dt;
-    if(this.delay <= 0) {
-        this.randomDirection();
-        this.delay = 500;
+    if(!this.hasGoal()) {
+        var randomNodeX = Math.floor(Math.random() * (this.worldSize.width / this.nodeSize.width));
+        var randomNodeY = Math.floor(Math.random() * (this.worldSize.height / this.nodeSize.height));
+        var termiteNode = this.gridInfo.getNode(this.x, this.y);
+        var nodes = this.gridInfo.search(termiteNode, {x: randomNodeX, y: randomNodeY});
+        var positions = this.gridInfo.getCenterPositions(nodes);
+        this.setTargets(positions);
+        this.setNodesTarget(nodes);
     }
     this.move(dt);
 };
 
 Termite.prototype.goToHeap = function(heap, dt) {
     if(this.useGrid) {
-        if (!this.isDestination(heap)) {
+        if (!this.isDestination(heap.x, heap.y)) {
             var termiteNode = this.gridInfo.getNode(this.x, this.y);
             var heapNode = this.gridInfo.getNode(heap.x, heap.y);
             var nodes = this.gridInfo.search(termiteNode, heapNode);
             var positions = this.gridInfo.getCenterPositions(nodes);
-            this.setTargets(positions);
+            if(positions.length > 0) {
+                //last position : heap position
+                positions[positions.length - 1].x = heap.x;
+                positions[positions.length - 1].y = heap.y;
+                this.setTargets(positions);
+            } else
+                this.setTarget(heap);
+            this.setNodesTarget(nodes);
         }
     } else
         this.setTarget({x: heap.x, y: heap.y});
@@ -242,7 +258,5 @@ Termite.prototype.updateInfoFromPerceivedHeaps = function() {
     var perceivedHeaps = this.getPerceivedAgents("wood_heap");
     for(var i=0; i<perceivedHeaps.length; i++) {
         this.woodInfo.updateHeap(perceivedHeaps[i]);
-        if(this.useGrid)
-            this.gridInfo.updateHeap(perceivedHeaps[i]);
     }
 };
