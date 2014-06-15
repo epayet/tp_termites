@@ -2,6 +2,7 @@ GridDebug = function(options) {
     Agent.call(this);
     this.gridInfo = options.gridInfo;
     this.nodeSize = options.nodeSize;
+    this.termiteTargets = options.termiteTargets;
 };
 
 GridDebug.prototype = Object.create(Agent.prototype);
@@ -17,12 +18,22 @@ GridDebug.prototype.draw = function(context) {
                 if (nodes[x][y].type == 0)
                     context.fillStyle = "rgba(255,0,0,0.5)";
                 else if (nodes[x][y].type == 1)
-                    context.fillStyle = "rgba(255,255,255,0.5)";
+                    context.fillStyle = "rgba(255,255,255,0.1)";
                 context.beginPath();
                 context.rect(x * width, y * height, width, height);
                 context.fill();
                 context.stroke();
             }
+        }
+
+        for(var i=0; i<this.termiteTargets.length; i++) {
+            var x = this.termiteTargets[i].x;
+            var y = this.termiteTargets[i].y;
+            context.fillStyle = "rgba(0,255,0,0.5)";
+            context.beginPath();
+            context.rect(x * width, y * height, width, height);
+            context.fill();
+            context.stroke();
         }
     }
 };

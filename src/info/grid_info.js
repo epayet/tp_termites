@@ -1,18 +1,8 @@
 GridInfo = function(options) {
     this.nodeSize = options.nodeSize;
     this.worldSize = options.worldSize;
+    this.wallsEncountered = {};
     this.createNodes();
-};
-
-GridInfo.prototype.updateHeap = function(heap, type) {
-    if(!type)
-        type = 0;
-    var nodesAffected = this.getNodesAffectedByHeap(heap);
-    for(var i=0; i<nodesAffected.length; i++) {
-        var nodeAffected = this.nodes[nodesAffected[i].x][nodesAffected[i].y];
-        nodeAffected.type = type;
-        nodeAffected.data.date = new Date();
-    }
 };
 
 GridInfo.prototype.update = function(gridInfo) {
@@ -28,21 +18,22 @@ GridInfo.prototype.update = function(gridInfo) {
     }
 };
 
-GridInfo.prototype.updateWoodTaken = function(heap) {
-    var heapBefore = new WoodHeap();
-    heapBefore.woodCount = heap.woodCount + 1;
-    heapBefore.moveTo(heap.x, heap.y);
-
-    if(!heap.dead) {
-        var nodesAffectedBefore = this.getNodesAffectedByHeap(heapBefore);
-        var nodesAffectedNow = this.getNodesAffectedByHeap(heap);
-        if (nodesAffectedNow.length < nodesAffectedBefore.length) {
-            this.updateHeap(heapBefore, 1);
-            this.updateHeap(heap);
+GridInfo.prototype.updateWall = function(wall) {
+    if(this.wallsEncountered[wall.identifier] == null) {
+        var nbNodesX = this.worldSize.width / this.nodeSize.width;
+        var nbNodesY = this.worldSize.height / this.nodeSize.height;
+        var nodeCenterWall = this.getNode(wall.x, wall.y);
+        var nbNodesAffectedX = Math.ceil((wall.boundingWidth / 2) / this.nodeSize.width);
+        var nbNodesAffectedY = Math.ceil((wall.boundingHeight / 2) / this.nodeSize.height);
+        for (var x = nodeCenterWall.x - nbNodesAffectedX; x <= nodeCenterWall.x + nbNodesAffectedX; x++) {
+            for (var y = nodeCenterWall.y - nbNodesAffectedY; y <= nodeCenterWall.y + nbNodesAffectedY; y++) {
+                if (x >= 0 && y >= 0 && x < nbNodesX && y < nbNodesY) {
+                    this.nodes[x][y].type = 0;
+                }
+            }
         }
+        this.wallsEncountered[wall.identifier] = true;
     }
-    else
-        this.updateHeap(heapBefore, 1);
 };
 
 GridInfo.prototype.getNode = function(x, y) {
@@ -87,26 +78,4 @@ GridInfo.prototype.getNodeMiddlePosition = function(x, y) {
         x: middleX,
         y: middleY
     }
-};
-
-GridInfo.prototype.getNodesAffectedByHeap = function(heap) {
-    var nodeHeap = this.getNode(heap.x, heap.y);
-    var nbNodesAffectedX = this.getNbNodesAffectedAround(heap, this.nodeSize.width);
-    var nbNodesAffectedY = this.getNbNodesAffectedAround(heap, this.nodeSize.height);
-
-    var nodes = [];
-    for(var x=nodeHeap.x - nbNodesAffectedX; x<=nodeHeap.x + nbNodesAffectedX; x++) {
-        for(var y=nodeHeap.y - nbNodesAffectedY; y<=nodeHeap.y + nbNodesAffectedY; y++) {
-            nodes.push({x: x, y: y});
-        }
-    }
-    return nodes;
-};
-
-GridInfo.prototype.getNbNodesAffectedAround = function (heap, size) {
-    var heapRadius = heap.getRadius();
-    if(heapRadius > size/2)
-        return Math.ceil((heapRadius - size/2) / size);
-    else
-        return Math.floor(heapRadius / size);
 };

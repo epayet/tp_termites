@@ -18,8 +18,8 @@ WoodHeap.prototype.updateRadius = function() {
 };
 
 WoodHeap.prototype.getRadius = function() {
-//    return Math.floor(this.woodCount / 2);
-    return this.woodCount;
+    return Math.floor(this.woodCount / 2);
+//    return this.woodCount;
 };
 
 WoodHeap.prototype.update = function(dt) {
@@ -38,7 +38,7 @@ WoodHeap.prototype.takeWood = function() {
 };
 
 WoodHeap.prototype.draw = function(context) {
-	context.fillStyle="rgba(255, 255, 255, 0.5)";
+	context.fillStyle="rgba(121, 48, 0, 0.5)";
 	context.strokeStyle="#000";
 	context.beginPath();
 	context.arc(this.x,this.y,this.boundingRadius,0,2*Math.PI);

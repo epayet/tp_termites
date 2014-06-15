@@ -11,6 +11,7 @@ function Wall() {
 		this.boundingHeight = 100 + Math.random() * 400;
 		this.boundingWidth = 20;		
 	}
+    this.identifier = Math.random() * 1000;
 
 //	this.collideTypes = ["wood_heap"];
 //	this.contactTypes = ["wood_heap"];
@@ -18,7 +19,7 @@ function Wall() {
 }
 
 Wall.prototype.draw = function(context) {
-	context.fillStyle = "rgba(255,255,255,0.5)";
+	context.fillStyle = "rgba(87,93,92,0.5)";
 	context.strokeStyle = "#000";
 	context.beginPath();
 	context.rect(this.x - this.boundingWidth/2, this.y - this.boundingHeight/2, this.boundingWidth, this.boundingHeight);
