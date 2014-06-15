@@ -12,13 +12,13 @@ WoodInfo.prototype.least = function() {
 };
 
 WoodInfo.prototype.updateHeap = function(heap) {
-    // quand rencontre tas de bois update de la list if premier rencontre on add sinon update woodinfo et date
     if(!this.heapsInfo[heap.identifier]){
         this.heapsInfo[heap.identifier] = {
             x: heap.x,
             y: heap.y,
             woodCount: heap.woodCount,
-            date : new Date()
+            date : new Date(),
+            dead: heap.dead
         };
     }
     else{
@@ -27,6 +27,7 @@ WoodInfo.prototype.updateHeap = function(heap) {
         heapInfo.y = heap.y;
         heapInfo.woodCount = heap.woodCount;
         heapInfo.date = new Date();
+        heapInfo.dead =  heap.dead;
     }
     this.recomputeMostAndLeast();
 };
@@ -42,7 +43,6 @@ WoodInfo.prototype.update = function(woodInfo) {
                 dead: heapInfo2.dead,
                 date : heapInfo2.date
             };
-            this.recomputeMostAndLeast();
         }
         else{
             var heapInfo = this.heapsInfo[identifier];
@@ -52,10 +52,10 @@ WoodInfo.prototype.update = function(woodInfo) {
                 heapInfo.woodCount = heapInfo2.woodCount;
                 heapInfo.date = heapInfo2.date;
                 heapInfo.dead = heapInfo2.dead;
-                this.recomputeMostAndLeast();
             }
         }
     }
+    this.recomputeMostAndLeast();
 };
 
 WoodInfo.prototype.isEnough = function() {

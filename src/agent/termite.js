@@ -26,8 +26,8 @@ function Termite(options) {
         });
     }
     this.destinationMargin = {
-        x: options.nodeSize.width / 2,
-        y: options.nodeSize.height / 2
+        x: options.nodeSize.width,
+        y: options.nodeSize.height
     };
     this.isDebugTermite = options.isDebugTermite;
 
@@ -134,7 +134,8 @@ Termite.prototype.processCollision = function(collidedAgent) {
 };
 
 Termite.prototype.processPerception = function(perceivedAgent) {
-    this.perceivedAgents.push(perceivedAgent);
+    //if(!perceivedAgent.dead)
+        this.perceivedAgents.push(perceivedAgent);
 };
 
 Termite.prototype.reset = function(){
@@ -213,6 +214,8 @@ Termite.prototype.draw = function(context) {
     context.strokeStyle="#000";
     context.beginPath();
     context.arc(this.x, this.y, this.boundingRadius, 0, 2*Math.PI);
+//    context.fillStyle="rgba(255, 0, 0, 0)";
+//    context.arc(this.x, this.y, this.perceptionRadius, 0, 2*Math.PI);
     context.fill();
     context.stroke();
 };
@@ -242,8 +245,10 @@ Termite.prototype.goToHeap = function(heap, dt) {
                 positions[positions.length - 1].x = heap.x;
                 positions[positions.length - 1].y = heap.y;
                 this.setTargets(positions);
-            } else
-                this.setTargets([heap]);
+            } else {
+//                this.setTargets([heap]);
+//                console.log("looooog");
+            }
             this.setNodesTarget(nodes);
         }
     } else
