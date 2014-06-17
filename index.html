@@ -24,9 +24,9 @@
     <script type="text/javascript" src="src/lib/astar.js"></script>
 
     <script language="javascript">
-    var NB_TERMITES = 1;
-    var NB_WOODHEAPS = 0;
-    var NB_WALLS = 5;
+    var NB_TERMITES = 20;
+    var NB_WOODHEAPS = 5;
+    var NB_WALLS = 0;
     var NODE_SIZE = {
         width: 16,
         height: 16
@@ -67,7 +67,11 @@
 		canvasContext = this.canvasElement.getContext("2d");
 
 		world = new World(canvasElement.width, canvasElement.height);
-
+        document.getElementById('agent').value = NB_TERMITES;
+        document.getElementById('heap').value = NB_WOODHEAPS;
+        document.getElementById('wall').value = NB_WALLS;
+        document.getElementById('width').value = NODE_SIZE.width;
+        document.getElementById('height').value = NODE_SIZE.height;
 
 		for(var i = 0; i < NB_WOODHEAPS; i ++) {
 			var woodHeap = new WoodHeap();
@@ -119,6 +123,15 @@
 		mainLoop = setInterval(update, 1000 / fps);
 		//update();
 	}
+
+    function setValue(){
+        NB_TERMITES = document.getElementById('agent').value;
+        NB_WOODHEAPS = document.getElementById('heap').value;
+        NB_WALLS = document.getElementById('wall').value;
+        NODE_SIZE.width = document.getElementById('width').value;
+        NODE_SIZE.height = document.getElementById('height').value;
+        init();
+    }
 	</script>
 </header>
 <body onload="init()">
@@ -129,8 +142,34 @@
         </div>
 
         <div id="misc">
-            <button onclick="DEBUG.play = !DEBUG.play">Stop/Play</button>
-            <button onclick="DEBUG.toggle_grid = !DEBUG.toggle_grid">Toggle grid</button>
+            <table>
+                <tr>
+                    <td><button onclick="DEBUG.play = !DEBUG.play">Stop/Play</button></td>
+                    <td><button onclick="DEBUG.toggle_grid = !DEBUG.toggle_grid">Toggle grid</button></td>
+                </tr>
+                <tr>
+                    <td><label>Nombre de termites :</label></td>
+                    <td><input type="text" id="agent"></td>
+                </tr>
+                <tr>
+                    <td><label>Nombre de tas de bois :</label></td>
+                    <td><input type="text" id="heap"></td>
+                </tr>
+                <tr>
+                    <td><label>Nombre de wall :</label></td>
+                    <td><input type="text" id="wall"></td>
+                </tr>
+                <tr>
+                    <td> <label>Taille de node :</label><br></td>
+                    <td>
+                        width :<input type="text" id="width"><br>
+                        height :<input type="text" id="height">
+                    </td>
+                </tr>
+                <tr>
+                    <td> <button onclick="setValue()">Valider</button></td>
+                </tr>
+            </table>
         </div>
     </div>
 </body>
