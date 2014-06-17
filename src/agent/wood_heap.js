@@ -5,7 +5,8 @@ function WoodHeap() {
 	Agent.call(this);
 	this.typeId = "wood_heap";
 
-	this.woodCount = Math.floor(Math.random() * 90 + 10);
+//	this.woodCount = Math.random() * 90 + 10;
+	this.woodCount = Math.random() * 20 + 10;
 	this.contactTypes = ["wood_heap", "wall"];
 
 	this.identifier = Math.random() * 1000;
@@ -18,8 +19,8 @@ WoodHeap.prototype.updateRadius = function() {
 };
 
 WoodHeap.prototype.getRadius = function() {
-    return Math.floor(this.woodCount / 2);
-//    return this.woodCount;
+//    return Math.floor(this.woodCount / 2);
+    return this.woodCount;
 };
 
 WoodHeap.prototype.update = function(dt) {
