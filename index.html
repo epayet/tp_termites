@@ -1,36 +1,43 @@
 <html>
 <header>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap-theme.min.css">
-    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap-responsive.min.css">
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
     <!--Agent-->
-	<script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/agent.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/termite.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/wood_heap.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/wall.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/grid_debug.js"></script>
+	<script type="text/javascript" src="src/agent/agent.js"></script>
+    <script type="text/javascript" src="src/agent/termite.js"></script>
+    <script type="text/javascript" src="src/agent/wood_heap.js"></script>
+    <script type="text/javascript" src="src/agent/wall.js"></script>
+    <script type="text/javascript" src="src/agent/grid_debug.js"></script>
     <!--World-->
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/world/world.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/world/world_solver.js"></script>
+    <script type="text/javascript" src="src/world/world.js"></script>
+    <script type="text/javascript" src="src/world/world_solver.js"></script>
     <!--Expert system-->
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/expert_system.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/engine.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/fact.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/rule.js"></script>
+    <script type="text/javascript" src="src/expert_system/expert_system.js"></script>
+    <script type="text/javascript" src="src/expert_system/engine.js"></script>
+    <script type="text/javascript" src="src/expert_system/fact.js"></script>
+    <script type="text/javascript" src="src/expert_system/rule.js"></script>
     <!--Math-->
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/math/vector.js"></script>
+    <script type="text/javascript" src="src/math/vector.js"></script>
     <!--Misc-->
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/info/wood_info.js"></script>
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/info/grid_info.js"></script>
+    <script type="text/javascript" src="src/info/wood_info.js"></script>
+    <script type="text/javascript" src="src/info/grid_info.js"></script>
     <!--Lib-->
-    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/lib/astar.js"></script>
-    <script type="text/javascript" src="src/lib/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="src/lib/astar.js"></script>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
     <script language="javascript">
     var NB_TERMITES = 1;
     var NB_WOODHEAPS = 5;
-    var NB_WALLS = 0;
+    var NB_WALLS = 1;
+    TERMITE_DEFAULT_SPEED = 200;
     var NODE_SIZE = {
         width: 16,
         height: 16
@@ -50,10 +57,6 @@
 	var lastUpdate = Date.now();
 	var dt = 0;
 
-    HEAPS = [];
-    WALLS = [];
-    TERMITES = [];
-
 	function updateTime() {
 		var now = Date.now();
     	dt = now - lastUpdate;
@@ -68,8 +71,17 @@
 	}
 
 	function init() {
+        HEAPS = [];
+        WALLS = [];
+        TERMITES = [];
+
 		canvasElement = document.getElementById("canvas");
 		canvasContext = this.canvasElement.getContext("2d");
+        canvasElement.addEventListener('click', function (event) {
+            for(var i=0; i<TERMITES.length; i++) {
+                TERMITES[i].setNodeDestination(event);
+            }
+        });
 
 		world = new World(canvasElement.width, canvasElement.height);
 
@@ -80,6 +92,7 @@
         document.getElementById('heightNode').value = NODE_SIZE.height;
         document.getElementById('widthCanvas').value = canvasElement.width;
         document.getElementById('heightCanvas').value = canvasElement.height;
+        document.getElementById('speed').value = TERMITE_DEFAULT_SPEED;
 
 		for(var i = 0; i < NB_WOODHEAPS; i ++) {
 			var woodHeap = new WoodHeap();
@@ -113,7 +126,8 @@
                 },
                 nodeSize: NODE_SIZE,
                 isDebugTermite: isDebugTermite,
-                useGrid : DEBUG.useGrid
+                useGrid : DEBUG.useGrid,
+                speed : TERMITE_DEFAULT_SPEED
             };
 			var termite = new Termite(options);
 			world.addAgent(termite);
@@ -141,6 +155,7 @@
         NODE_SIZE.height = document.getElementById('heightNode').value;
         canvasElement.width = document.getElementById('widthCanvas').value;
         canvasElement.height = document.getElementById('heightCanvas').value;
+        TERMITE_DEFAULT_SPEED = document.getElementById('speed').value;
         init();
     }
 	</script>
@@ -183,6 +198,12 @@
                     <td>
                         width  : <input type="text" class="form-control" id="widthCanvas">
                         height : <input type="text" class="form-control" id="heightCanvas">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Vitesse de termites :</label><br></td>
+                    <td>
+                        Speed  : <input type="text" class="form-control" id="speed">
                     </td>
                 </tr>
                 <tr>

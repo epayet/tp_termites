@@ -23,17 +23,33 @@ GridInfo.prototype.updateWall = function(wall) {
         var nbNodesX = this.worldSize.width / this.nodeSize.width;
         var nbNodesY = this.worldSize.height / this.nodeSize.height;
         var nodeCenterWall = this.getNode(wall.x, wall.y);
-        var nbNodesAffectedX = Math.ceil((wall.boundingWidth / 2) / this.nodeSize.width);
-        var nbNodesAffectedY = Math.ceil((wall.boundingHeight / 2) / this.nodeSize.height);
-        for (var x = nodeCenterWall.x - nbNodesAffectedX; x <= nodeCenterWall.x + nbNodesAffectedX; x++) {
-            for (var y = nodeCenterWall.y - nbNodesAffectedY; y <= nodeCenterWall.y + nbNodesAffectedY; y++) {
+        var nodeWallCenterPosition = this.nodes[nodeCenterWall.x][nodeCenterWall.y].data.middlePosition;
+        var wallWidthRadius = wall.boundingWidth / 2;
+        var wallHeightRadius = wall.boundingHeight / 2;
+        var nodeWidth = this.nodeSize.width;
+        var nodeHeight = this.nodeSize.height;
+        var nbNodesAffectedXLeft = this.getNbNodesAffected(wallWidthRadius, wall.x, nodeWallCenterPosition.x, nodeWidth, true);
+        var nbNodesAffectedXRight = this.getNbNodesAffected(wallWidthRadius, wall.x, nodeWallCenterPosition.x, nodeWidth, false);
+        var nbNodesAffectedYTop = this.getNbNodesAffected(wallHeightRadius, wall.y, nodeWallCenterPosition.y, nodeHeight, true);
+        var nbNodesAffectedYBottom = this.getNbNodesAffected(wallHeightRadius, wall.y, nodeWallCenterPosition.y, nodeHeight, false);
+        for (var x = nodeCenterWall.x - nbNodesAffectedXLeft; x <= nodeCenterWall.x + nbNodesAffectedXRight; x++) {
+            for (var y = nodeCenterWall.y - nbNodesAffectedYTop; y <= nodeCenterWall.y + nbNodesAffectedYBottom; y++) {
                 if (x >= 0 && y >= 0 && x < nbNodesX && y < nbNodesY) {
                     this.nodes[x][y].type = 0;
                 }
             }
         }
         this.wallsEncountered[wall.identifier] = true;
-    }
+        return true;
+    } else
+        return false;
+};
+
+GridInfo.prototype.getNbNodesAffected = function (radius, x, nodeX, nodeWidth, isLeft) {
+    var distanceBeetweenPoints = isLeft ? (nodeX - x) : (x - nodeX);
+    var distanceBetweenNodeSideAndWallCenter = (nodeWidth / 2) - distanceBeetweenPoints;
+    var nbNodesAffected = (radius - distanceBetweenNodeSideAndWallCenter) / nodeWidth;
+    return Math.ceil(nbNodesAffected);
 };
 
 GridInfo.prototype.getNode = function(x, y) {

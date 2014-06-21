@@ -114,28 +114,50 @@ describe("A Grid Info", function() {
         });
     });
 
-    describe("updateWall", function() {
-        it("should update a really small wall (one node)", function () {
+    describe("update Wall", function(){
+        it("should set some nodes unWalkable", function(){
             var wall = {
-                x: 2,
-                y: 2,
-                boundingWidth: 1,
-                boundingHeight: 1
+                identifier : 1,
+                x : 5,
+                y : 7,
+                boundingWidth: 4,
+                boundingHeight: 4
             };
             gridInfo.updateWall(wall);
-            expect(gridInfo.nodes[0][0].type).toBe(0);
+            expect(gridInfo.nodes[0][1].type).toBe(0);
+            expect(gridInfo.nodes[1][1].type).toBe(0);
+            expect(gridInfo.nodes[0][2].type).toBe(0);
+            expect(gridInfo.nodes[1][2].type).toBe(0);
+            expect(gridInfo.nodes[0][0].type).toBe(1);
+            expect(gridInfo.nodes[1][0].type).toBe(1);
+            expect(gridInfo.nodes[2][0].type).toBe(1);
+            expect(gridInfo.nodes[2][1].type).toBe(1);
+            expect(gridInfo.nodes[2][2].type).toBe(1);
         });
+    });
 
-        it("should update a normal wall", function () {
+    describe("getNbNodesAffected", function () {
+        it("should have correct left affected numbers", function () {
             var wall = {
-                x: 4,
-                y: 1,
-                boundingWidth: 2,
-                boundingHeight: 2
+                x: 5,
+                y: 7,
+                boundingWidth: 4,
+                boundingHeight: 4
             };
-            gridInfo.updateWall(wall);
-            expect(gridInfo.nodes[0][0].type).toBe(0);
-            expect(gridInfo.nodes[1][0].type).toBe(0);
+            var wallWidthRadius = wall.boundingWidth / 2;
+            var wallHeightRadius = wall.boundingHeight/ 2;
+            var nodeWidthRadius = gridInfo.nodeSize.width / 2;
+            var nodeHeightRadius = gridInfo.nodeSize.height / 2;
+
+            var nbNodesXLeft = gridInfo.getNbNodesAffected(wallWidthRadius, wall.x, 6, nodeWidthRadius, true);
+            var nbNodesXRight = gridInfo.getNbNodesAffected(wallWidthRadius, wall.x, 6, nodeWidthRadius, false);
+            var nbNodesYTop = gridInfo.getNbNodesAffected(wallHeightRadius, wall.y, 6, nodeHeightRadius, true);
+            var nbNodesYBottom = gridInfo.getNbNodesAffected(wallHeightRadius, wall.y, 6, nodeHeightRadius, false);
+
+            expect(nbNodesXLeft).toBe(1);
+            expect(nbNodesXRight).toBe(0);
+            expect(nbNodesYTop).toBe(0);
+            expect(nbNodesYBottom).toBe(1);
         });
     });
 });

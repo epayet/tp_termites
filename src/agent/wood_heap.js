@@ -6,7 +6,7 @@ function WoodHeap() {
 	this.typeId = "wood_heap";
 
 //	this.woodCount = Math.random() * 90 + 10;
-	this.woodCount = Math.random() * 20 + 10;
+	this.woodCount = Math.random() * 50 + 10;
 	this.contactTypes = ["wood_heap", "wall"];
 
 	this.identifier = Math.random() * 1000;

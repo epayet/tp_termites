@@ -7,7 +7,7 @@ function Termite(options) {
     this.boundingRadius = 3;
     this.perceptionRadius = 100;
     this.hasWood = false;
-    this.speed = 200;
+    this.speed = options.speed;
     this.collidedAgent = null;
     this.perceivedAgents = [];
     this.woodInfo = new WoodInfo();
@@ -16,6 +16,7 @@ function Termite(options) {
     this.nodesTarget = [{x:0, y:0}];
     this.worldSize = options.worldSize;
     this.nodeSize = options.nodeSize;
+    this.timePassedInSameNode = 0;
 
     this.collideTypes = ["wood_heap", "wall"];
     this.contactTypes = ["wood_heap", "termite", "wall"];
@@ -26,8 +27,8 @@ function Termite(options) {
         });
     }
     this.destinationMargin = {
-        x: options.nodeSize.width,
-        y: options.nodeSize.height
+        x: options.nodeSize.width/4,
+        y: options.nodeSize.height/4
     };
     this.isDebugTermite = options.isDebugTermite;
 
@@ -42,12 +43,15 @@ Termite.prototype.initExpertSystem = function() {
     this.expertSystem.addRule("update_info_from_termite", ["perceived_termite"]);
     this.expertSystem.addRule("update_info_from_heap", ["perceived_heap"]);
     this.expertSystem.addRule("update_info_from_wall", ["perceived_wall"]);
+    this.expertSystem.addRule("random_move", ["blocked_too_much"]);
 };
 
 Termite.prototype.update = function(dt) {
     this.perceive();
     var conclusions = this.analyze();
     this.act(conclusions, dt);
+    if(this.direction != null)
+        this.move(dt);
     this.reset();
 };
 
@@ -62,6 +66,7 @@ Termite.prototype.perceive = function() {
     this.expertSystem.setFactValid("perceived_heap", this.isPerceivedWith("wood_heap"));
     this.expertSystem.setFactValid("perceived_wall", this.isPerceivedWith("wall"));
     this.expertSystem.setFactValid("not_enough_info", this.woodInfo.isEnough() == false);
+    this.expertSystem.setFactValid("blocked_too_much", this.blockedTooMuch());
 };
 
 Termite.prototype.analyze = function() {
@@ -119,7 +124,6 @@ Termite.prototype.getPerceivedAgents = function(agentType) {
 
 Termite.prototype.processCollision = function(collidedAgent) {
     this.collidedAgent = collidedAgent;
-    this.resetGoal();
     if(collidedAgent && collidedAgent.typeId == "wood_heap") {
         if(!this.hasWood) {
             collidedAgent.takeWood();
@@ -130,12 +134,14 @@ Termite.prototype.processCollision = function(collidedAgent) {
             collidedAgent.addWood();
             this.hasWood = false;
         }
+        this.resetGoal();
+    } else if(!collidedAgent) {
+        this.resetGoal();
     }
 };
 
 Termite.prototype.processPerception = function(perceivedAgent) {
-    //if(!perceivedAgent.dead)
-        this.perceivedAgents.push(perceivedAgent);
+    this.perceivedAgents.push(perceivedAgent);
 };
 
 Termite.prototype.reset = function(){
@@ -147,6 +153,9 @@ Termite.prototype.move = function(dt) {
     this.moveBy(this.direction, this.speed*(dt/1000));
     if(this.destinationCallback && this.hasArrivedToDestination()) {
         this.destinationCallback();
+        this.timePassedInSameNode = 0;
+    } else {
+        this.timePassedInSameNode += dt;
     }
 };
 
@@ -164,13 +173,18 @@ Termite.prototype.hasArrivedToDestination = function () {
 
 Termite.prototype.setDirectionForTarget = function(x, y) {
     this.direction = new Vect(x - this.x, y - this.y);
+    //If 0 doesn't move : magic value !
+    if(this.direction.x === 0)
+        this.direction.x = 0.0000001;
+    if(this.direction.y === 0)
+        this.direction.y = 0.0000001;
     this.direction.normalize(1);
 };
 
 Termite.prototype.setTargets = function(targets) {
+    var self = this;
     if(targets.length > 0) {
         this.targets = targets;
-        var self = this;
         //set the first destination
         this.setTarget(targets[0], nextTargetCallback);
     }
@@ -181,6 +195,9 @@ Termite.prototype.setTargets = function(targets) {
         var nextTarget = self.targets[0];
         if (nextTarget)
             self.setTarget(nextTarget, nextTargetCallback);
+        else {
+            self.resetGoal();
+        }
     }
 };
 
@@ -197,6 +214,8 @@ Termite.prototype.hasGoal = function () {
 Termite.prototype.resetGoal = function() {
     this.targets = [];
     this.nodesTarget.length = 0;
+    if(this.clickTarget)
+        this.setNodeDestination(this.clickTarget);
 };
 
 Termite.prototype.isDestination = function(x, y) {
@@ -224,13 +243,15 @@ Termite.prototype.randomMove = function (dt) {
     if(!this.hasGoal()) {
         var randomNodeX = Math.floor(Math.random() * (this.worldSize.width / this.nodeSize.width));
         var randomNodeY = Math.floor(Math.random() * (this.worldSize.height / this.nodeSize.height));
+//        var randomNodeX = 0;
+//        var randomNodeY = 0;
         var termiteNode = this.gridInfo.getNode(this.x, this.y);
         var nodes = this.gridInfo.search(termiteNode, {x: randomNodeX, y: randomNodeY});
         var positions = this.gridInfo.getCenterPositions(nodes);
         this.setTargets(positions);
         this.setNodesTarget(nodes);
     }
-    this.move(dt);
+//    this.move(dt);
 };
 
 Termite.prototype.goToHeap = function(heap, dt) {
@@ -245,16 +266,14 @@ Termite.prototype.goToHeap = function(heap, dt) {
                 positions[positions.length - 1].x = heap.x;
                 positions[positions.length - 1].y = heap.y;
                 this.setTargets(positions);
+                this.setNodesTarget(nodes);
             } else {
-//                this.setTargets([heap]);
-//                console.log("looooog");
+                this.randomMove(dt);
             }
-            this.setNodesTarget(nodes);
         }
-    } else
+    } else {
         this.setTarget({x: heap.x, y: heap.y});
-
-    this.move(dt);
+    }
 };
 
 Termite.prototype.updateInfoFromPerceivedTermites = function () {
@@ -277,7 +296,25 @@ Termite.prototype.updateInfoFromPerceivedWalls = function() {
     var perceivedWalls = this.getPerceivedAgents("wall");
     for(var i=0; i<perceivedWalls.length; i++) {
         if(this.useGrid) {
-            this.gridInfo.updateWall(perceivedWalls[i]);
+            if(this.gridInfo.updateWall(perceivedWalls[i]))
+                this.resetGoal();
         }
     }
+};
+
+Termite.prototype.setNodeDestination = function(target) {
+    this.clickTarget = target;
+    var nodeTarget = this.gridInfo.getNode(target.x, target.y);
+    var termiteNode = this.gridInfo.getNode(this.x, this.y);
+    var nodes = this.gridInfo.search(termiteNode, nodeTarget);
+    var positions = this.gridInfo.getCenterPositions(nodes);
+    this.setTargets(positions);
+    this.setNodesTarget(nodes);
+};
+
+Termite.prototype.blockedTooMuch = function () {
+    if( this.timePassedInSameNode > (this.speed / 100) * 1000) {
+        console.log("mémé");
+        return true;
+    } else return false;
 };
