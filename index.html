@@ -1,30 +1,34 @@
 <html>
 <header>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="src/lib/bootstrap/css/bootstrap-responsive.min.css">
     <!--Agent-->
-	<script type="text/javascript" src="src/agent/agent.js"></script>
-    <script type="text/javascript" src="src/agent/termite.js"></script>
-    <script type="text/javascript" src="src/agent/wood_heap.js"></script>
-    <script type="text/javascript" src="src/agent/wall.js"></script>
-    <script type="text/javascript" src="src/agent/grid_debug.js"></script>
+	<script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/agent.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/termite.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/wood_heap.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/wall.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/agent/grid_debug.js"></script>
     <!--World-->
-    <script type="text/javascript" src="src/world/world.js"></script>
-    <script type="text/javascript" src="src/world/world_solver.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/world/world.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/world/world_solver.js"></script>
     <!--Expert system-->
-    <script type="text/javascript" src="src/expert_system/expert_system.js"></script>
-    <script type="text/javascript" src="src/expert_system/engine.js"></script>
-    <script type="text/javascript" src="src/expert_system/fact.js"></script>
-    <script type="text/javascript" src="src/expert_system/rule.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/expert_system.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/engine.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/fact.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/expert_system/rule.js"></script>
     <!--Math-->
-    <script type="text/javascript" src="src/math/vector.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/math/vector.js"></script>
     <!--Misc-->
-    <script type="text/javascript" src="src/info/wood_info.js"></script>
-    <script type="text/javascript" src="src/info/grid_info.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/info/wood_info.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/info/grid_info.js"></script>
     <!--Lib-->
-    <script type="text/javascript" src="src/lib/astar.js"></script>
+    <script type="text/javascript" src="../../../Downloads/tp_termites-master/src/lib/astar.js"></script>
+    <script type="text/javascript" src="src/lib/bootstrap/js/bootstrap.js"></script>
 
     <script language="javascript">
-    var NB_TERMITES = 20;
+    var NB_TERMITES = 1;
     var NB_WOODHEAPS = 5;
     var NB_WALLS = 0;
     var NODE_SIZE = {
@@ -48,6 +52,7 @@
 
     HEAPS = [];
     WALLS = [];
+    TERMITES = [];
 
 	function updateTime() {
 		var now = Date.now();
@@ -67,11 +72,14 @@
 		canvasContext = this.canvasElement.getContext("2d");
 
 		world = new World(canvasElement.width, canvasElement.height);
+
         document.getElementById('agent').value = NB_TERMITES;
         document.getElementById('heap').value = NB_WOODHEAPS;
         document.getElementById('wall').value = NB_WALLS;
-        document.getElementById('width').value = NODE_SIZE.width;
-        document.getElementById('height').value = NODE_SIZE.height;
+        document.getElementById('widthNode').value = NODE_SIZE.width;
+        document.getElementById('heightNode').value = NODE_SIZE.height;
+        document.getElementById('widthCanvas').value = canvasElement.width;
+        document.getElementById('heightCanvas').value = canvasElement.height;
 
 		for(var i = 0; i < NB_WOODHEAPS; i ++) {
 			var woodHeap = new WoodHeap();
@@ -117,6 +125,7 @@
                     nodeSize : NODE_SIZE,
                     termiteTargets: termite.nodesTarget
                 }));
+            TERMITES.push(termite);
 		}
 
 		var fps = 60;
@@ -128,8 +137,10 @@
         NB_TERMITES = document.getElementById('agent').value;
         NB_WOODHEAPS = document.getElementById('heap').value;
         NB_WALLS = document.getElementById('wall').value;
-        NODE_SIZE.width = document.getElementById('width').value;
-        NODE_SIZE.height = document.getElementById('height').value;
+        NODE_SIZE.width = document.getElementById('widthNode').value;
+        NODE_SIZE.height = document.getElementById('heightNode').value;
+        canvasElement.width = document.getElementById('widthCanvas').value;
+        canvasElement.height = document.getElementById('heightCanvas').value;
         init();
     }
 	</script>
@@ -142,32 +153,40 @@
         </div>
 
         <div id="misc">
-            <table>
+            <table class="table table-striped">
+                <tr><h1>Interface termites :</h1></tr>
                 <tr>
-                    <td><button onclick="DEBUG.play = !DEBUG.play">Stop/Play</button></td>
-                    <td><button onclick="DEBUG.toggle_grid = !DEBUG.toggle_grid">Toggle grid</button></td>
+                    <td><button type="submit" class="btn btn-danger" onclick="DEBUG.play = !DEBUG.play">Stop/Play</i></button></td>
+                    <td><button type="submit" class="btn btn-warning" onclick="DEBUG.toggle_grid = !DEBUG.toggle_grid">Toggle grid</i></button></td>
                 </tr>
                 <tr>
                     <td><label>Nombre de termites :</label></td>
-                    <td><input type="text" id="agent"></td>
+                    <td><input type="text" class="form-control" id="agent"></td>
                 </tr>
                 <tr>
                     <td><label>Nombre de tas de bois :</label></td>
-                    <td><input type="text" id="heap"></td>
+                    <td><input type="text" class="form-control" id="heap"></td>
                 </tr>
                 <tr>
                     <td><label>Nombre de wall :</label></td>
-                    <td><input type="text" id="wall"></td>
+                    <td><input type="text" class="form-control" id="wall"></td>
                 </tr>
                 <tr>
-                    <td> <label>Taille de node :</label><br></td>
+                    <td><label>Taille de node :</label><br></td>
                     <td>
-                        width :<input type="text" id="width"><br>
-                        height :<input type="text" id="height">
+                        width  : <input type="text" class="form-control" id="widthNode">
+                        height : <input type="text" class="form-control" id="heightNode">
                     </td>
                 </tr>
                 <tr>
-                    <td> <button onclick="setValue()">Valider</button></td>
+                    <td><label>Taille du canvas :</label><br></td>
+                    <td>
+                        width  : <input type="text" class="form-control" id="widthCanvas">
+                        height : <input type="text" class="form-control" id="heightCanvas">
+                    </td>
+                </tr>
+                <tr>
+                    <td></td><td><button type="submit" class="btn btn-primary" onclick="setValue()">Valider</button></td>
                 </tr>
             </table>
         </div>
