@@ -74,14 +74,23 @@ Termite.prototype.analyze = function() {
 };
 
 Termite.prototype.act = function(conclusions, dt) {
+    var nbMoveInstruction = 0;
+    var moveFunction = null;
+    var self = this;
     if(DEBUG.play) {
         for (var i = 0; i < conclusions.length; i++) {
             switch (conclusions[i]) {
                 case "go_to_least_wood":
-                    this.goToHeap(this.woodInfo.least(), dt);
+                    moveFunction = function() {
+                        self.goToHeap(self.woodInfo.least(), dt)
+                    };
+                    nbMoveInstruction++;
                     break;
                 case "go_to_most_wood":
-                    this.goToHeap(this.woodInfo.most(), dt);
+                    moveFunction = function() {
+                        self.goToHeap(self.woodInfo.most(), dt);
+                    };
+                    nbMoveInstruction++;
                     break;
                 case "update_info_from_termite":
                     this.updateInfoFromPerceivedTermites();
@@ -93,10 +102,20 @@ Termite.prototype.act = function(conclusions, dt) {
                     this.updateInfoFromPerceivedWalls();
                     break;
                 case "random_move":
-                    this.randomMove(dt);
+                    moveFunction = function() {
+                        self.randomMove(dt);
+                    };
+                    nbMoveInstruction++;
                     break;
             }
 //            console.log(conclusions[i]);
+        }
+        //if have multiple move instructions: random instead
+        if(nbMoveInstruction > 1) {
+            this.randomMove(dt);
+//            console.log("random move instead");
+        } else if(nbMoveInstruction == 1) { // else do the original move
+            moveFunction();
         }
     }
 };
@@ -247,6 +266,9 @@ Termite.prototype.randomMove = function (dt) {
 //        var randomNodeY = 0;
         var termiteNode = this.gridInfo.getNode(this.x, this.y);
         var nodes = this.gridInfo.search(termiteNode, {x: randomNodeX, y: randomNodeY});
+        if(nodes.length == 0) {
+//            console.log("wut");
+        }
         var positions = this.gridInfo.getCenterPositions(nodes);
         this.setTargets(positions);
         this.setNodesTarget(nodes);
@@ -314,7 +336,7 @@ Termite.prototype.setNodeDestination = function(target) {
 
 Termite.prototype.blockedTooMuch = function () {
     if( this.timePassedInSameNode > (this.speed / 100) * 1000) {
-        console.log("mémé");
+//        console.log("blocked");
         return true;
     } else return false;
 };
