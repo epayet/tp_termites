@@ -27,8 +27,8 @@ function Termite(options) {
         });
     }
     this.destinationMargin = {
-        x: options.nodeSize.width/4,
-        y: options.nodeSize.height/4
+        x: options.nodeSize.width/2,
+        y: options.nodeSize.height/2
     };
     this.isDebugTermite = options.isDebugTermite;
 
@@ -43,7 +43,6 @@ Termite.prototype.initExpertSystem = function() {
     this.expertSystem.addRule("update_info_from_termite", ["perceived_termite"]);
     this.expertSystem.addRule("update_info_from_heap", ["perceived_heap"]);
     this.expertSystem.addRule("update_info_from_wall", ["perceived_wall"]);
-    this.expertSystem.addRule("random_move", ["blocked_too_much"]);
 };
 
 Termite.prototype.update = function(dt) {
@@ -66,7 +65,6 @@ Termite.prototype.perceive = function() {
     this.expertSystem.setFactValid("perceived_heap", this.isPerceivedWith("wood_heap"));
     this.expertSystem.setFactValid("perceived_wall", this.isPerceivedWith("wall"));
     this.expertSystem.setFactValid("not_enough_info", this.woodInfo.isEnough() == false);
-    this.expertSystem.setFactValid("blocked_too_much", this.blockedTooMuch());
 };
 
 Termite.prototype.analyze = function() {
@@ -74,23 +72,14 @@ Termite.prototype.analyze = function() {
 };
 
 Termite.prototype.act = function(conclusions, dt) {
-    var nbMoveInstruction = 0;
-    var moveFunction = null;
-    var self = this;
     if(DEBUG.play) {
         for (var i = 0; i < conclusions.length; i++) {
             switch (conclusions[i]) {
                 case "go_to_least_wood":
-                    moveFunction = function() {
-                        self.goToHeap(self.woodInfo.least(), dt)
-                    };
-                    nbMoveInstruction++;
+                    this.goToHeap(this.woodInfo.least(), dt);
                     break;
                 case "go_to_most_wood":
-                    moveFunction = function() {
-                        self.goToHeap(self.woodInfo.most(), dt);
-                    };
-                    nbMoveInstruction++;
+                    this.goToHeap(this.woodInfo.most(), dt);
                     break;
                 case "update_info_from_termite":
                     this.updateInfoFromPerceivedTermites();
@@ -102,20 +91,10 @@ Termite.prototype.act = function(conclusions, dt) {
                     this.updateInfoFromPerceivedWalls();
                     break;
                 case "random_move":
-                    moveFunction = function() {
-                        self.randomMove(dt);
-                    };
-                    nbMoveInstruction++;
+                    this.randomMove(dt);
                     break;
             }
 //            console.log(conclusions[i]);
-        }
-        //if have multiple move instructions: random instead
-        if(nbMoveInstruction > 1) {
-            this.randomMove(dt);
-//            console.log("random move instead");
-        } else if(nbMoveInstruction == 1) { // else do the original move
-            moveFunction();
         }
     }
 };
@@ -276,6 +255,10 @@ Termite.prototype.randomMove = function (dt) {
 //    this.move(dt);
 };
 
+Termite.prototype.randomMoveWithoutNode = function() {
+    console.log("random");
+};
+
 Termite.prototype.goToHeap = function(heap, dt) {
     if(this.useGrid) {
         if (!this.isDestination(heap.x, heap.y)) {
@@ -332,11 +315,4 @@ Termite.prototype.setNodeDestination = function(target) {
     var positions = this.gridInfo.getCenterPositions(nodes);
     this.setTargets(positions);
     this.setNodesTarget(nodes);
-};
-
-Termite.prototype.blockedTooMuch = function () {
-    if( this.timePassedInSameNode > (this.speed / 100) * 1000) {
-//        console.log("blocked");
-        return true;
-    } else return false;
 };

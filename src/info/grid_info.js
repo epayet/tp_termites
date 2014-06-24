@@ -61,7 +61,7 @@ GridInfo.prototype.getNode = function(x, y) {
 GridInfo.prototype.search = function(start, end) {
     var startNode = this.nodes[start.x][start.y];
     var endNode = this.nodes[end.x][end.y];
-    var result = astar.search(this.nodes, startNode, endNode, {diagonal: true});
+    var result = astar.search(this.nodes, startNode, endNode, {diagonal: false});
     return result;
 };
 
