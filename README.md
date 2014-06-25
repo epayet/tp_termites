@@ -10,27 +10,6 @@ GOLFIER Jean-Matthieu
 PAYET Emmanuel
 SCHMITZ Sophie
 
-## Plan
-
-* Description projet
-* Architecture
-  * Termite.js: Utilisation d’un system expert
-  * Phases (perception, analyze, act)
-  * Sépération des tâches (en TDD):
-    * WoodInfo: Gestion des informations sur les tas de bois de chaque termite
-      * Mis à jour à chaque perception de heap
-      * Permet d’avoir à tout moment le tas de bois ayant le moins de bois et le plus
-    * GridInfo: Gestion de la grille de chaque termite (+ utilisation astar.js (lib))
-      * Se met à jour lors de la rencontre d’un mur, et flag les noeuds autour comme “unwalkable”
-      * Permet à tout moment de savoir comment aller à un noeud précis
-  * Dans les deux classes, quand une termite perçois une autre, elles s’échangent leurs infos à jour
-* Stratégie
-  * Conclusions && faits
-* Problèmes & Idées d’améliorations
-  * Bug: Termites de temps en temps coincées dans les tas de bois
-  * Amélio: Grille dynamique (problème: noeuds fixes: murs plus gros que prévu dans le pathfinding)
-  * Bug: Tas de bois situé dans un noeud marqué unwalkable par un mur, impossible d’y aller en astar => ne fait rien en particulier (solution: grille dynamique)
-
 
 ## Projet
 
