@@ -10,17 +10,21 @@ GridDebug.prototype = Object.create(Agent.prototype);
 GridDebug.prototype.draw = function(context) {
     if(DEBUG.toggle_grid) {
         var nodes = this.gridInfo.nodes;
-        var width = this.nodeSize.width;
-        var height = this.nodeSize.height;
+//        var width = this.nodeSize.width;
+//        var height = this.nodeSize.height;
         context.strokeStyle = "#000";
         for (var x = 0; x < nodes.length; x++) {
             for (var y = 0; y < nodes[x].length; y++) {
+                var width = nodes[x][y].data.size.width;
+                var height = nodes[x][y].data.size.height;
                 if (nodes[x][y].type == 0)
                     context.fillStyle = "rgba(255,0,0,0.5)";
                 else if (nodes[x][y].type == 1)
                     context.fillStyle = "rgba(255,255,255,0.1)";
                 context.beginPath();
-                context.rect(x * width, y * height, width, height);
+                var yPosition = nodes[x][y].data.originalPosition.y;
+                var xPosition = nodes[x][y].data.originalPosition.x;
+                context.rect(xPosition, yPosition, width, height);
                 context.fill();
                 context.stroke();
             }
@@ -29,6 +33,8 @@ GridDebug.prototype.draw = function(context) {
         for(var i=0; i<this.termiteTargets.length; i++) {
             var x = this.termiteTargets[i].x;
             var y = this.termiteTargets[i].y;
+            var width = nodes[x][y].data.size.width;
+            var height = nodes[x][y].data.size.height;
             context.fillStyle = "rgba(0,255,0,0.5)";
             context.beginPath();
             context.rect(x * width, y * height, width, height);

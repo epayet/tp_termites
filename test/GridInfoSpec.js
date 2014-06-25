@@ -93,7 +93,7 @@ describe("A Grid Info", function() {
             gridInfo.nodes[1][0].type = 0;
             gridInfo.nodes[1][1].type = 0;
             var nodes = gridInfo.search({x: 0, y: 0}, {x: 2, y:0});
-            expect(nodes.length).toBe(4);
+            expect(nodes.length).toBe(6);
             expect(nodes[0].x).toBe(0);
             expect(nodes[0].y).toBe(1);
         });

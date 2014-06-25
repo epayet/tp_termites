@@ -49,8 +49,10 @@ Termite.prototype.update = function(dt) {
     this.perceive();
     var conclusions = this.analyze();
     this.act(conclusions, dt);
-    if(this.direction != null)
-        this.move(dt);
+    if(DEBUG.play) {
+        if (this.direction != null)
+            this.move(dt);
+    }
     this.reset();
 };
 
@@ -72,30 +74,28 @@ Termite.prototype.analyze = function() {
 };
 
 Termite.prototype.act = function(conclusions, dt) {
-    if(DEBUG.play) {
-        for (var i = 0; i < conclusions.length; i++) {
-            switch (conclusions[i]) {
-                case "go_to_least_wood":
-                    this.goToHeap(this.woodInfo.least(), dt);
-                    break;
-                case "go_to_most_wood":
-                    this.goToHeap(this.woodInfo.most(), dt);
-                    break;
-                case "update_info_from_termite":
-                    this.updateInfoFromPerceivedTermites();
-                    break;
-                case "update_info_from_heap":
-                    this.updateInfoFromPerceivedHeaps();
-                    break;
-                case "update_info_from_wall":
-                    this.updateInfoFromPerceivedWalls();
-                    break;
-                case "random_move":
-                    this.randomMove(dt);
-                    break;
-            }
-//            console.log(conclusions[i]);
+    for (var i = 0; i < conclusions.length; i++) {
+        switch (conclusions[i]) {
+            case "go_to_least_wood":
+                this.goToHeap(this.woodInfo.least(), dt);
+                break;
+            case "go_to_most_wood":
+                this.goToHeap(this.woodInfo.most(), dt);
+                break;
+            case "update_info_from_termite":
+                this.updateInfoFromPerceivedTermites();
+                break;
+            case "update_info_from_heap":
+                this.updateInfoFromPerceivedHeaps();
+                break;
+            case "update_info_from_wall":
+                this.updateInfoFromPerceivedWalls();
+                break;
+            case "random_move":
+                this.randomMove(dt);
+                break;
         }
+//            console.log(conclusions[i]);
     }
 };
 
