@@ -6,9 +6,9 @@ TP TERMITATOR
 # Projet d’Intelligence Artificielle
 Mise en place d’un système intelligent de récolte de bois par un groupe de termites
 
-GOLFIER Jean-Matthieu
-PAYET Emmanuel
-SCHMITZ Sophie
+* GOLFIER Jean-Matthieu
+* PAYET Emmanuel
+* SCHMITZ Sophie
 
 ## Demo
 
